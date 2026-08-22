@@ -1,0 +1,9 @@
+.post-title {
+  border: 2px solid #eee;
+  border-radius: 10px;
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.post-title:focus-visible {outline: none;}

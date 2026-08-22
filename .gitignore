@@ -1,0 +1,9 @@
+/data/database.db
+*.db
+/.vscode/
+.cursor/
+.env
+settings.json
+/uploads/
+bkrisa.webp
+nginx.conf
