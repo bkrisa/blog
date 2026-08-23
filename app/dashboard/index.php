@@ -27,13 +27,12 @@ $page_url = "";
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="">
-
+<div class="dashboard">
   <?php if (isset($_GET['deleted'])): ?>
     <p class="save-notice">Post deleted.</p>
   <?php endif; ?>
 
-  <a href="editor.php" class="button-new-post">+ New poszt</a>
+  <a href="editor.php" style="margin-bottom: 10px;">+ New post</a>
 
   <table class="posts-table">
     <thead>
@@ -67,8 +66,6 @@ require_once __DIR__ . '/../includes/header.php';
           </td>
           <td><?php echo htmlspecialchars($post['updated_at']); ?></td>
           <td>
-            <a href="editor.php?id=<?php echo (int)$post['id']; ?>">Editing</a>
-
             <form
               action="delete_post.php"
               method="POST"
@@ -76,14 +73,13 @@ require_once __DIR__ . '/../includes/header.php';
               style="display:inline"
             >
               <input type="hidden" name="post_id" value="<?php echo (int)$post['id']; ?>">
-              <button type="submit">Delete</button>
+              <button type="submit" style="border: none;background: transparent;cursor: pointer;">🗑️</button>
             </form>
           </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
-
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

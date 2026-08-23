@@ -1,9 +1,43 @@
-.post-title {
+/* dashboard */
+.dashboard {padding: 1rem 0;}
+.dashboard table {width: 100%;font-size: 14px;border-collapse: collapse}
+.dashboard thead {
+  border: 1px solid #eee;
+  display: table-caption;
+  width: 100%;
+}
+.dashboard tr {display: table;width: 100%;}
+.dashboard th, .dashboard td {
+  text-align: left;
+  font-weight: 500;
+  color: var(--heading);
+  padding: 0 8px;
+}
+.dashboard td {color: var(--text);padding: 8px;}
+.posts-table th:nth-child(1), .posts-table td:nth-child(1) {width: auto;}
+.posts-table th:nth-child(2), .posts-table td:nth-child(2) {width: 150px;}
+.posts-table th:nth-child(3), .posts-table td:nth-child(3) {width: 80px;}
+.posts-table th:nth-child(4), .posts-table td:nth-child(4) {width: 150px;}
+.posts-table th:nth-child(5), .posts-table td:nth-child(5) {width: 34px;}
+.posts-table>tbody>:nth-child(odd){background: color-mix(in srgb, var(--main) 8%, transparent);}
+
+/* editor */
+.editor input {
   border: 2px solid #eee;
   border-radius: 10px;
   width: 100%;
-  padding: 10px;
-  font-size: 18px;
   margin-bottom: 10px;
 }
-.post-title:focus-visible {outline: none;}
+.editor input:focus-visible {outline: auto;color: var(--heading);}
+.post-title {font-size: 18px;padding: 10px;}
+.post-tags {font-size: 14px;padding: 8px;}
+button[value=published], button[value=draft] {
+  font-size: 16px;
+  background: transparent;
+  padding: 6px 8px;
+  margin-top: 16px;
+  border: 1px solid var(--main);
+  border-radius: 8px;
+  cursor: pointer;
+}
+button[value=published] {background: var(--main);}

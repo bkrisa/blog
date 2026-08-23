@@ -152,5 +152,5 @@ try {
   die('An error occurred while saving: ' . htmlspecialchars($e->getMessage()));
 }
 
-header('Location: editor.php?saved=1');
+header('Location: editor.php?id=' . $postId . '&saved=1');
 exit;

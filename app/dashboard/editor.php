@@ -1,30 +1,71 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-$page_title = "Post editor";
+require_once __DIR__ . '/../includes/database.php';
+
+$db = new Database();
+
+$postId = isset($_GET['id']) ? (int)$_GET['id'] : null;
+$post = null;
+$tagsValue = '';
+
+if ($postId) {
+  $stmt = $db->prepare("SELECT * FROM posts WHERE id = ?");
+  $stmt->execute([$postId]);
+  $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if (!$post) {
+    die('Post not found.');
+  }
+
+  $tagStmt = $db->prepare("
+    SELECT t.title
+    FROM tags t
+    INNER JOIN post_tags pt ON pt.tag_id = t.id
+    WHERE pt.post_id = ?
+    ORDER BY pt.rowid
+  ");
+  $tagStmt->execute([$postId]);
+  $tagTitles = $tagStmt->fetchAll(PDO::FETCH_COLUMN);
+  $tagsValue = implode(', ', $tagTitles);
+}
+
+$page_title = $post ? "Editing: " . $post['title'] : "Post editor";
 $page_description = "";
 $page_url = "";
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-
-<div class="">
+<div class="editor">
+  <a href="<?php echo htmlspecialchars($root_path) ?>dashboard" style="font-size: 14px;margin-bottom: 10px;">← Back dashboard</a>
 
   <form action="save_post.php" method="POST">
-    <input type="text" name="title" class="post-title" placeholder="Post title" required autofocus>
-    <textarea id="my-editor" name="content"></textarea>
-    <button type="submit">Save</button>
+    <?php if ($post): ?>
+      <input type="hidden" name="post_id" value="<?php echo (int)$post['id']; ?>">
+    <?php endif; ?>
+
+    <input
+      type="text"
+      name="title"
+      class="post-title"
+      placeholder="Post title"
+      required
+      autofocus
+      value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>"
+    >
+
+    <input
+      type="text"
+      name="tags"
+      class="post-tags"
+      placeholder="tag1, tag2, tag3"
+      value="<?php echo htmlspecialchars($tagsValue); ?>"
+    >
+
+    <textarea id="my-editor" name="content"><?php echo htmlspecialchars($post['content'] ?? ''); ?></textarea>
+
+    <button type="submit" name="status" value="published">Publish</button>
+    <button type="submit" name="status" value="draft">Save draft</button>
   </form>
-
-  <form action="save_post.php" method="POST">
-  <input type="text" name="title" class="post-title" placeholder="Post title" required autofocus>
-
-  <input type="text" name="tags" class="post-tags" placeholder="tag1, tag2, tag3">
-
-  <textarea id="my-editor" name="content"></textarea>
-
-  <button type="submit" name="status" value="draft">Save draft</button>
-  <button type="submit" name="status" value="published">Publish</button>
-</form>
 
   <script>
     tinymce.init({
@@ -78,7 +119,6 @@ require_once __DIR__ . '/../includes/header.php';
       }
     });
   </script>
-
 </div>
 
 
