@@ -4,11 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
-require_once __DIR__ . '/../includes/settings.php';
-
 // Load settings from JSON file
-$settingsFile = __DIR__ . '/../settings.json';
+require_once __DIR__ . '/../includes/settings.php';
 $settings = loadSettings();
+$root_path = getRootPath();
 
 function getSafeDescription(string $rawDesc): string {
   $cleanHtml = strip_tags($rawDesc, '<a>');
@@ -27,8 +26,6 @@ function getSafeDescription(string $rawDesc): string {
   return $cleanHtml;
 }
 
-// Ensure $root_path always exists
-$root_path = $settings['site']['base_url'] ?? '/';
 // Check if the current page is a dashboard page
 $uri = $_SERVER['REQUEST_URI'];
 $is_dashboard_page = str_starts_with($uri, $root_path . 'dashboard');

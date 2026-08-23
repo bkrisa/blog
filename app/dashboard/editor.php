@@ -82,7 +82,7 @@ require_once __DIR__ . '/../includes/header.php';
         const formData = new FormData();
         formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-        fetch('includes/upload.php', {
+        fetch('<?php echo htmlspecialchars($root_path); ?>includes/upload.php', {
           method: 'POST',
           body: formData
         })

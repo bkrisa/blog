@@ -21,6 +21,12 @@ function loadSettings(): array {
     die("<p>JSON Syntax Error: The settings.json file is invalid. Please check the file for errors.</p>
         <p><strong>Error details:</strong> {$errorMsg}</p>");
   }
-
   return $settings;
+}
+
+// Ensure $root_path always exists
+function getRootPath(): string {
+  $settings = loadSettings();
+  $basePath = $settings['site']['base_url'] ?? '/';
+  return rtrim($basePath, '/') . '/';
 }

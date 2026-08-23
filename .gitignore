@@ -4,6 +4,6 @@
 .cursor/
 .env
 settings.json
-/uploads/
+app/uploads/
 bkrisa.webp
 nginx.conf
