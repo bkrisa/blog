@@ -5,7 +5,7 @@ Plan:
 - tags
 - post page
 
-`json 
+```json 
 {
   "site": {
     "name": "bkrisa's blog",
@@ -40,4 +40,4 @@ Plan:
     { "platform": "x", "url": "https://x.com/bkrisa12" }
   ]
 }
-`
+```
