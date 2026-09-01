@@ -14,7 +14,7 @@ if ($postId) {
   $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if (!$post) {
-    die('Post not found.');
+    die('A poszt nem található.');
   }
 
   $tagStmt = $db->prepare("
@@ -29,13 +29,15 @@ if ($postId) {
   $tagsValue = implode(', ', $tagTitles);
 }
 
-$page_title = $post ? "Editing: " . $post['title'] : "Post editor";
+$page_title = $post ? "Szerkesztés: " . $post['title'] : "Post editor";
 $page_description = "";
 $page_url = "";
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
+
 <div class="editor">
+
   <a href="<?php echo htmlspecialchars($root_path) ?>dashboard" style="font-size: 14px;margin-bottom: 10px;">← Back dashboard</a>
 
   <form action="save_post.php" method="POST">
@@ -76,6 +78,12 @@ require_once __DIR__ . '/../includes/header.php';
       toolbar: 'blocks bold italic underline strikethrough superscript subscript | alignleft aligncenter alignright | bullist numlist link image code',
       promotion: false,
       branding: false,
+
+      // Enélkül a TinyMCE saját maga relativizálja a képek/linkek URL-jét
+      // ahhoz a dokumentumhoz képest, amit épp szerkesztesz (dashboard/editor.php),
+      // NEM ahhoz, ahol a poszt majd ténylegesen megjelenik (post.php).
+      // Az upload.php már helyes, abszolút URL-t ad vissza - ez a beállítás
+      // biztosítja, hogy a TinyMCE meg is hagyja azt úgy, ahogy kapta.
       relative_urls: false,
       remove_script_host: false,
       convert_urls: true,
@@ -85,7 +93,7 @@ require_once __DIR__ . '/../includes/header.php';
         const formData = new FormData();
         formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-        fetch('<?php echo htmlspecialchars($root_path); ?>includes/upload.php', {
+        fetch('includes/upload.php', {
           method: 'POST',
           body: formData
         })
@@ -122,6 +130,7 @@ require_once __DIR__ . '/../includes/header.php';
       }
     });
   </script>
+
 </div>
 
 
