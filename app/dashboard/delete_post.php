@@ -10,14 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : null;
 
 if (!$postId) {
-  die('Hiányzó poszt azonosító.');
+  die('The post ID is missing.');
 }
 
 $db = new Database();
 
-// A post_tags kapcsolatok automatikusan törlődnek az ON DELETE CASCADE
-// miatt (feltéve, hogy a PRAGMA foreign_keys = ON be van kapcsolva
-// a Database osztály konstruktorában)
 $stmt = $db->prepare("DELETE FROM posts WHERE id = ?");
 $stmt->execute([$postId]);
 

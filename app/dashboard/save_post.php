@@ -74,7 +74,7 @@ if ($postId) {
   $existing = $existingStmt->fetch(PDO::FETCH_ASSOC);
 
   if (!$existing) {
-    die('A szerkesztendő poszt nem található.');
+    die('The post to be edited cannot be found.');
   }
 
   $isEdit = true;
