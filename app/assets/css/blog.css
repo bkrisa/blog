@@ -10,9 +10,13 @@ body {
   margin: 0 auto;
   line-height: 26px;
 }
-h1, h2, h3, h4, h5, h6 {color: var(--heading);}
+h1, h2, h3, h4, h5, h6 {color: var(--heading);margin-top: 20px;margin-bottom: 12px;}
+h2 {font-size: 28px;}
+h3 {font-size: 22px;}
+p {margin-bottom: 1rem;}
 a {color: var(--main);text-decoration: none;display: inline-block;}
 a:hover {text-decoration: underline;}
+img {width: 100%;height: auto;}
 
 /* header */
 header {
@@ -41,6 +45,27 @@ header nav ul {display: flex;gap: 20px;flex-wrap: wrap; list-style: none;}
 header nav a {text-decoration: none;color: var(--text);}
 
 /* blog */
+.post-list article {padding: 20px 10px;text-align: center;}
+.post-list article:not(:last-child) {border-bottom: 1px solid #eee;}
+.post-list time {margin: 0;}
+.post-list h2 {margin: 0 ;}
+.post-list img {max-width: 600px; margin: 10px 0;}
+.post-list p {font-size: 18px;}
+
+/* post */
+.post-header {margin-bottom: 20px;}
+.post-header h1 {margin-bottom: 4px;}
+time {font-size: 14px; margin-bottom: 6px; display: block;}
+.post-tags a {
+  padding: .15rem .7rem;
+  margin-right: 4px;
+  border: 1px solid #eee;
+  border-radius: 100px;
+  font-size: 13px;
+}
+.post-tags a:hover {border-color: var(--main);text-decoration: none;}
+.post-content {margin-bottom: 20px;}
+.author-bio {margin-top: 40px;border-top: 1px solid #eee;}
 .author-bio a {display: inline;}
 
 /* footer */

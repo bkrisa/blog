@@ -31,21 +31,20 @@ require_once __DIR__ . '/includes/header.php';
   <?php foreach ($posts as $post): ?>
     <?php $thumbnail = getFirstImage($post['content']); ?>
     <article class="post-preview">
-      <?php if ($thumbnail): ?>
-        <a href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">
-          <img src="<?php echo htmlspecialchars($thumbnail); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" 
-          class="post-thumbnail" loading="lazy">
-        </a>
-      <?php endif; ?>
-
       <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
-        <?php echo htmlspecialchars(date('Y.m.d.', strtotime($post['created_at']))); ?>
+        <?php echo htmlspecialchars(date('Y M. d.', strtotime($post['created_at']))); ?>
       </time>
       <h2>
         <a href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">
           <?php echo htmlspecialchars($post['title']); ?>
         </a>
       </h2>
+      <?php if ($thumbnail): ?>
+        <a href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">
+          <img src="<?php echo htmlspecialchars($thumbnail); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" 
+          class="post-thumbnail" loading="lazy">
+        </a>
+      <?php endif; ?>
       <?php if (!empty($post['excerpt'])): ?>
         <p class="post-excerpt"><?php echo htmlspecialchars($post['excerpt']); ?></p>
       <?php endif; ?>

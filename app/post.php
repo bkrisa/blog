@@ -40,27 +40,28 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="post">
-
   <article>
-    <h1><?php echo htmlspecialchars($post['title']); ?></h1>
+    <div class="post-header">
+      <h1><?php echo htmlspecialchars($post['title']); ?></h1>
 
-    <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
-      <?php echo htmlspecialchars(date('Y.m.d.', strtotime($post['created_at']))); ?>
-    </time>
+      <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
+        <?php echo htmlspecialchars(date('Y M d', strtotime($post['created_at']))); ?>
+      </time>
+
+      <?php if (!empty($tags)): ?>
+        <div class="post-tags">
+          <?php foreach ($tags as $tag): ?>
+            <a href="<?php echo htmlspecialchars($root_path); ?>tags.php?slug=<?php echo urlencode($tag['slug']); ?>">
+              <?php echo htmlspecialchars($tag['title']); ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </div>
 
     <div class="post-content">
       <?php echo $post['content']; ?>
     </div>
-
-    <?php if (!empty($tags)): ?>
-      <div class="post-tags">
-        <?php foreach ($tags as $tag): ?>
-          <a href="<?php echo htmlspecialchars($root_path); ?>tags.php?slug=<?php echo urlencode($tag['slug']); ?>">
-            <?php echo htmlspecialchars($tag['title']); ?>
-          </a>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
   </article>
 
   <!-- Twitter widgets -->
