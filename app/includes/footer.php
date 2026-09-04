@@ -10,7 +10,6 @@
       <?php endforeach; ?>
     </ul>
     <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($settings['site']['name']); ?> - All rights reserved.</p>
-    <a href="https://openblog.bkrisa.com/?ref=watermark" target="_blank" rel="noopener">Published with OpenBlog</a>
   </footer>
 </body>
 
