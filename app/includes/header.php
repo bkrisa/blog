@@ -121,7 +121,7 @@ if (!defined('SECURE_ACCESS')) {
       <nav>
         <ul>
           <li>
-            <a href="<?php echo htmlspecialchars($root_path); ?>dashboard">Dashboard</a>
+            <a href="/dashboard">Dashboard</a>
           </li>
         </ul>
       </nav>
