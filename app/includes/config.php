@@ -14,7 +14,7 @@ require_once __DIR__ . '/breadcrumbs.php';
 // Site settings
 $config = [
   'database' => [
-    'path' => $_ENV['DB_PATH'] ?? dirname(__DIR__, 2) . '/data/blog.db',
+    'path' => $_ENV['DB_PATH'] ?? dirname(__DIR__, 2) . '/data/database.db',
   ],
 ];
 

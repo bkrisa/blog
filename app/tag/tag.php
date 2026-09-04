@@ -1,31 +1,54 @@
 <?php
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/database.php';
-require_once __DIR__ . '/includes/settings.php';
-require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/settings.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $settings = loadSettings();
 $db = new Database();
+$slug = $_GET['slug'] ?? '';
 
 $stmt = $db->prepare("
-  SELECT id, title, slug, excerpt, content, created_at
-  FROM posts
-  WHERE status = 'published'
-  ORDER BY created_at DESC
+  SELECT id, title, slug
+  FROM tags
+  WHERE slug = :slug
+  LIMIT 1
 ");
-$stmt->execute();
+$stmt->execute(['slug' => $slug]);
+$tag = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$stmt = $db->prepare("
+  SELECT
+    p.id,
+    p.title,
+    p.slug,
+    p.excerpt,
+    p.content,
+    p.created_at
+  FROM posts p
+  INNER JOIN post_tags pt ON pt.post_id = p.id
+  INNER JOIN tags t ON t.id = pt.tag_id
+  WHERE t.slug = :slug
+    AND p.status = 'published'
+  ORDER BY p.created_at DESC
+");
+$stmt->execute(['slug' => $slug]);
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$page_title = $settings['site']['name'];
+$page_title = $tag['title'] . ' - ' . $settings['site']['name'];
 $page_description = "";
 $page_url = "";
 
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="post-list">
   <?php if (empty($posts)): ?>
     <p>There are no published posts yet.</p>
+  <?php endif; ?>
+
+  <?php if ($tag): ?>
+    <h1><?php echo htmlspecialchars($tag['title']); ?></h1>
   <?php endif; ?>
 
   <?php foreach ($posts as $post): ?>
@@ -54,4 +77,4 @@ require_once __DIR__ . '/includes/header.php';
   <?php endforeach; ?>
 </div>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
