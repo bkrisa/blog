@@ -109,7 +109,7 @@ if (!defined('SECURE_ACCESS')) {
         <ul>
           <?php foreach ($settings['navigation'] as $item): ?>
             <li>
-              <a href="<?php echo htmlspecialchars($root_path), htmlspecialchars($item['url']); ?>">
+              <a href="<?php echo htmlspecialchars($item['url']); ?>">
                 <?php echo htmlspecialchars($item['label']); ?>
               </a>
             </li>
