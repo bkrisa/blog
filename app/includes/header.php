@@ -28,7 +28,8 @@ function getSafeDescription(string $rawDesc): string {
 
 // Check if the current page is a dashboard page
 $uri = $_SERVER['REQUEST_URI'];
-$is_dashboard_page = str_starts_with($uri, $root_path . 'dashboard');
+// $is_dashboard_page = str_starts_with($uri, $root_path . 'dashboard');
+$is_dashboard_page = (strpos($uri, '/dashboard/') !== false);
 
 // Security constant definition
 if (!defined('SECURE_ACCESS')) {
