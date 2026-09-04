@@ -121,7 +121,7 @@ if (!defined('SECURE_ACCESS')) {
       <nav>
         <ul>
           <li>
-            <a href="/dashboard">Dashboard</a>
+            <a href="/blog/dashboard">Dashboard</a>
           </li>
         </ul>
       </nav>

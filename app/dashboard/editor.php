@@ -36,7 +36,7 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="editor">
-  <a href="<?php echo htmlspecialchars($root_path) ?>dashboard" style="font-size: 14px;margin-bottom: 10px;">← Back dashboard</a>
+  <a href="/blog/dashboard" style="font-size: 14px;margin-bottom: 10px;">← Back dashboard</a>
 
   <form action="save_post.php" method="POST">
     <?php if ($post): ?>
