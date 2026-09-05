@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/settings.php';
-require_once __DIR__ . '/../includes/tailscale_auth.php';
+require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
 
 $root_path = getRootPath();
