@@ -8,6 +8,9 @@ function verifyTailscaleAccess(): void {
   $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
 
   if ($remoteIp === '') {
+    $output = shell_exec('sudo /usr/bin/tailscale whois --json ' . escapeshellarg($remoteIp) . ' 2>&1');
+    error_log('TAILSCALE DEBUG - IP: ' . $remoteIp . ' - Output: ' . $output);
+    $data = json_decode((string)$output, true);
     http_response_code(403);
     die('Access denied.');
   }
