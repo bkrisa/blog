@@ -72,6 +72,16 @@ require_once __DIR__ . '/../includes/header.php';
       selector: '#my-editor',
       height: 400,
       menubar: false,
+      content_style: `
+        body {max-width: 100%;}
+        img {
+          display: block;
+          max-width: 100%;
+          max-height: 800px;
+          height: auto;
+          margin-inline: auto;
+        }
+      `,
       plugins: 'link image code table lists',
       toolbar: 'blocks bold italic underline strikethrough superscript subscript | alignleft aligncenter alignright | bullist numlist link image code',
       promotion: false,
