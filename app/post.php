@@ -34,7 +34,7 @@ $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
 $page_title = $post['title'];
 $page_description = $post['excerpt'] ?? '';
-$page_url = rtrim($settings['site']['blog_url'], '/') . '/post.php?slug=' . urlencode($post['slug']);
+$page_url = rtrim($settings['site']['blog_url'], '/') . '/' . $post['slug'];
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -51,7 +51,7 @@ require_once __DIR__ . '/includes/header.php';
       <?php if (!empty($tags)): ?>
         <div class="post-tags">
           <?php foreach ($tags as $tag): ?>
-            <a href="<?php echo htmlspecialchars($root_path); ?>tags.php?slug=<?php echo urlencode($tag['slug']); ?>">
+            <a href="<?php echo htmlspecialchars($root_path . 'tags/' . $tag['slug']); ?>">
               <?php echo htmlspecialchars($tag['title']); ?>
             </a>
           <?php endforeach; ?>

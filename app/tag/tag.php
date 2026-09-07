@@ -55,7 +55,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php $thumbnail = getFirstImage($post['content']); ?>
     <article class="post-preview">
       <?php if ($thumbnail): ?>
-        <a class="post-thumbnail-link" href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">
+        <a class="post-thumbnail-link" href="<?php echo htmlspecialchars($root_path . $post['slug']); ?>">
           <img src="<?php echo htmlspecialchars($thumbnail); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" 
           class="post-thumbnail" loading="lazy">
         </a>
@@ -65,7 +65,7 @@ require_once __DIR__ . '/../includes/header.php';
           <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
         </time>
         <h2>
-          <a href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">
+          <a href="<?php echo htmlspecialchars($root_path . $post['slug']); ?>">
             <?php echo htmlspecialchars($post['title']); ?>
           </a>
         </h2>
