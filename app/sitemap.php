@@ -3,30 +3,43 @@ require_once __DIR__ . '/includes/settings.php';
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 
-// Set XML header
 header('Content-Type: application/xml; charset=utf-8');
 
 $settings = loadSettings();
 $baseUrl = rtrim($settings['site']['blog_url'], '/');
-
 $db = new Database();
 
-// Start XML output
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-// Static pages
-$staticPages = [
-  ['url' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
-];
-
-foreach ($staticPages as $page) {
+function sitemapUrl(string $loc, string $priority, string $changefreq, ?string $lastmod = null): void {
   echo "  <url>\n";
-  echo "    <loc>" . htmlspecialchars($baseUrl . $page['url']) . "</loc>\n";
-  echo "    <priority>" . $page['priority'] . "</priority>\n";
-  echo "    <changefreq>" . $page['changefreq'] . "</changefreq>\n";
+  echo "    <loc>" . htmlspecialchars($loc, ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</loc>\n";
+  if ($lastmod) {
+    echo "    <lastmod>" . htmlspecialchars($lastmod, ENT_XML1, 'UTF-8') . "</lastmod>\n";
+  }
+  echo "    <changefreq>{$changefreq}</changefreq>\n";
+  echo "    <priority>{$priority}</priority>\n";
   echo "  </url>\n";
 }
 
-// Close XML
+sitemapUrl($baseUrl . '/', '1.0', 'daily');
+
+$stmt = $db->prepare("
+  SELECT slug, created_at, updated_at
+  FROM posts
+  WHERE status = 'published'
+  ORDER BY COALESCE(updated_at, created_at) DESC
+");
+$stmt->execute();
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($posts as $post) {
+  $loc = $baseUrl . '/' . rawurlencode($post['slug']);
+
+  $raw = $post['updated_at'] ?: $post['created_at'];
+  $lastmod = $raw ? date('Y-m-d', strtotime($raw)) : null;
+
+  sitemapUrl($loc, '0.8', 'weekly', $lastmod);
+}
 echo '</urlset>';
