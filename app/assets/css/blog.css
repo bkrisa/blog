@@ -74,6 +74,7 @@ time {font-size: 14px; margin-bottom: 6px; display: block;}
   margin-inline: auto;
 }
 .post-content hr {margin: 20px 0;}
+.post-content .twitter-tweet {margin: 0 auto;}
 .author-bio {margin-top: 40px;border-top: 1px solid #eee;}
 .author-bio a {display: inline;}
 
