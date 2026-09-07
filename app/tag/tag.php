@@ -62,7 +62,7 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
       <div>
         <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
-          <?php echo htmlspecialchars(date('Y M. d.', strtotime($post['created_at']))); ?>
+          <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
         </time>
         <h2>
           <a href="<?php echo htmlspecialchars($root_path); ?>post.php?slug=<?php echo urlencode($post['slug']); ?>">

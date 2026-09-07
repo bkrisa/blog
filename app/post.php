@@ -45,7 +45,7 @@ require_once __DIR__ . '/includes/header.php';
       <h1><?php echo htmlspecialchars($post['title']); ?></h1>
 
       <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
-        <?php echo htmlspecialchars(date('Y M d', strtotime($post['created_at']))); ?>
+        <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
       </time>
 
       <?php if (!empty($tags)): ?>
