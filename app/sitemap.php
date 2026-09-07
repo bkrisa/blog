@@ -6,7 +6,8 @@ require_once __DIR__ . '/includes/database.php';
 header('Content-Type: application/xml; charset=utf-8');
 
 $settings = loadSettings();
-$baseUrl = rtrim($settings['site']['blog_url'], '/');
+$baseUrl = rtrim($settings['site']['base_url'], '/');
+$blogUrl = rtrim($settings['site']['blog_url'], '/');
 $db = new Database();
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
@@ -22,6 +23,7 @@ function sitemapUrl(string $loc, ?string $lastmod = null): void {
 }
 
 sitemapUrl($baseUrl . '/');
+sitemapUrl($blogUrl . '/');
 
 $stmt = $db->prepare("
   SELECT slug, created_at, updated_at
@@ -33,11 +35,10 @@ $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($posts as $post) {
-  $loc = $baseUrl . '/' . rawurlencode($post['slug']);
-
+  $loc = $blogUrl . '/' . rawurlencode($post['slug']);
   $raw = $post['updated_at'] ?: $post['created_at'];
   $lastmod = $raw ? date('Y-m-d', strtotime($raw)) : null;
-
   sitemapUrl($loc, $lastmod);
 }
+
 echo '</urlset>';
