@@ -38,6 +38,6 @@ foreach ($posts as $post) {
   $raw = $post['updated_at'] ?: $post['created_at'];
   $lastmod = $raw ? date('Y-m-d', strtotime($raw)) : null;
 
-  sitemapUrl($loc, '0.8', 'weekly', $lastmod);
+  sitemapUrl($loc, $lastmod);
 }
 echo '</urlset>';
