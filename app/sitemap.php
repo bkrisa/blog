@@ -12,18 +12,16 @@ $db = new Database();
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-function sitemapUrl(string $loc, string $priority, string $changefreq, ?string $lastmod = null): void {
+function sitemapUrl(string $loc, ?string $lastmod = null): void {
   echo "  <url>\n";
   echo "    <loc>" . htmlspecialchars($loc, ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</loc>\n";
   if ($lastmod) {
     echo "    <lastmod>" . htmlspecialchars($lastmod, ENT_XML1, 'UTF-8') . "</lastmod>\n";
   }
-  echo "    <changefreq>{$changefreq}</changefreq>\n";
-  echo "    <priority>{$priority}</priority>\n";
   echo "  </url>\n";
 }
 
-sitemapUrl($baseUrl . '/', '1.0', 'daily');
+sitemapUrl($baseUrl . '/');
 
 $stmt = $db->prepare("
   SELECT slug, created_at, updated_at
