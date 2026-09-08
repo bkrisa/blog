@@ -28,7 +28,6 @@ function getSafeDescription(string $rawDesc): string {
 
 // Check if the current page is a dashboard page
 $uri = $_SERVER['REQUEST_URI'];
-// $is_dashboard_page = str_starts_with($uri, $root_path . 'dashboard');
 $is_dashboard_page = (strpos($uri, '/dashboard/') !== false);
 
 // Security constant definition
@@ -43,7 +42,6 @@ if (!defined('SECURE_ACCESS')) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta name="twitter:widgets:csp" content="on">
 
   <title><?php echo htmlspecialchars($page_title); ?></title>
   <meta name="description" content="<?php echo htmlspecialchars($page_description); ?>">
@@ -70,6 +68,7 @@ if (!defined('SECURE_ACCESS')) {
   <meta name="twitter:image" content="<?php echo htmlspecialchars($settings['site']['logo']); ?>">
   <meta name="twitter:image:alt" content="<?php echo htmlspecialchars($settings['site']['name']); ?>">
   <meta name="twitter:image:src" content="<?php echo htmlspecialchars($settings['site']['logo']); ?>">
+  <meta name="twitter:widgets:csp" content="on">
 
   <link rel="canonical" href="<?php echo htmlspecialchars($page_url); ?>" />
 
