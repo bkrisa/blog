@@ -1,18 +1,12 @@
-Plan:
-- dashboard
-- post editor
-- blog page
-- tags
-- post page
-
+settings.json
 ```json 
 {
   "site": {
     "name": "bkrisa's blog",
-    "base_path": "/open-blog/app/",
+    "base_url": "/open-blog/app/",
     "blog_url": "https://bkrisa.com/blog",
-    "logo": "bkrisa.webp",
-    "title_end": "| bkrisa"
+    "logo": "https://bkrisa.com/bkrisa.webp",
+    "author_img": "https://bkrisa.com/bkrisa.webp"
   },
   "author": {
     "name": "Kristof Budai",
@@ -26,9 +20,15 @@ Plan:
       "bg": "#ffffff"
     },
     "fonts": {
-      "primary": "Inter, sans-serif"
+      "primary": "Arial"
     }
   },
+  "scripts": [
+    {
+      "src": "https://scripts.simpleanalyticscdn.com/latest.js",
+      "type": "text/javascript"
+    }
+  ],
   "navigation": [
     { "label": "home", "url": "/" },
     { "label": "blog", "url": "/blog" },
@@ -36,8 +36,8 @@ Plan:
     { "label": "rss", "url": "/rss" }
   ],
   "social_links": [
-    { "platform": "github", "url": "https://github.com/bkrisa" },
-    { "platform": "x", "url": "https://x.com/bkrisa12" }
+    { "platform": "X", "url": "https://x.com/bkrisa12" },
+    { "platform": "github", "url": "https://github.com/bkrisa" }
   ]
 }
 ```
