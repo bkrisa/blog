@@ -6,7 +6,8 @@ settings.jsongit
     "base_url": "/open-blog/app/",
     "blog_url": "https://bkrisa.com/blog",
     "logo": "https://bkrisa.com/bkrisa.webp",
-    "author_img": "https://bkrisa.com/bkrisa.webp"
+    "author_img": "https://bkrisa.com/bkrisa.webp",
+    "twitter_handle": "bkrisa12"
   },
   "author": {
     "name": "Kristof Budai",
