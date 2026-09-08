@@ -46,10 +46,10 @@ if (!defined('SECURE_ACCESS')) {
   <title><?php echo htmlspecialchars($page_title); ?></title>
   <meta name="description" content="<?php echo htmlspecialchars($page_description); ?>">
 
-  <!-- dashboard -->
   <?php if(!$is_dashboard_page): ?>
     <meta name="robots" content="index, follow">
   <?php else: ?>
+    <!-- dashboard -->
     <meta name="robots" content="noindex, nofollow">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js"></script>
     <link rel="stylesheet" href="<?php echo htmlspecialchars($root_path); ?>assets/css/dashboard.css">

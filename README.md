@@ -1,4 +1,4 @@
-settings.json
+settings.jsongit 
 ```json 
 {
   "site": {
@@ -24,10 +24,7 @@ settings.json
     }
   },
   "scripts": [
-    {
-      "src": "https://scripts.simpleanalyticscdn.com/latest.js",
-      "type": "text/javascript"
-    }
+    { "src": "https://scripts.simpleanalyticscdn.com/latest.js", "async": true }
   ],
   "navigation": [
     { "label": "home", "url": "/" },
