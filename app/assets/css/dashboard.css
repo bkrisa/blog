@@ -30,7 +30,8 @@
 }
 .editor input:focus-visible {outline: auto;color: var(--heading);}
 .post-title {font-size: 18px;padding: 10px;}
-.post-tags {font-size: 14px;padding: 8px;}
+.post-slug {font-size: 14px;padding: 6px;}
+.post-tags {font-size: 14px;padding: 8px;margin-top: 10px;}
 button[value=published], button[value=draft] {
   font-size: 16px;
   background: transparent;

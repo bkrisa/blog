@@ -59,6 +59,7 @@ require_once __DIR__ . '/../includes/header.php';
       placeholder="post-url"
       value="<?php echo htmlspecialchars($post['slug'] ?? ''); ?>"
     >
+    <textarea id="my-editor" name="content"><?php echo htmlspecialchars($post['content'] ?? ''); ?></textarea>
     <input
       type="text"
       name="tags"
@@ -66,9 +67,6 @@ require_once __DIR__ . '/../includes/header.php';
       placeholder="tag1, tag2, tag3"
       value="<?php echo htmlspecialchars($tagsValue); ?>"
     >
-
-    <textarea id="my-editor" name="content"><?php echo htmlspecialchars($post['content'] ?? ''); ?></textarea>
-
     <button type="submit" name="status" value="published">Publish</button>
     <button type="submit" name="status" value="draft">Save draft</button>
   </form>
