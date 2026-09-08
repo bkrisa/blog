@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Load settings from JSON file
-require_once __DIR__ . '/../includes/settings.php';
+require_once __DIR__ . '/settings.php';
 $settings = loadSettings();
 $root_path = getRootPath();
 
@@ -27,7 +27,7 @@ function getSafeDescription(string $rawDesc): string {
 }
 
 // Load schema functions
-//require_once __DIR__ . '/schema.php';
+require_once __DIR__ . '/schema.php';
 
 // Check if the current page is a dashboard page
 $uri = $_SERVER['REQUEST_URI'];
