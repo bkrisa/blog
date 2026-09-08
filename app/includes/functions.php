@@ -43,7 +43,10 @@ function addHeadingIds(string $html): string {
  
   $dom = new DOMDocument();
   libxml_use_internal_errors(true);
-  $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+  $dom->loadHTML(
+    '<?xml encoding="utf-8" ?><div id="__wrapper__">' . $html . '</div>',
+    LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+  );
   libxml_clear_errors();
 
   $usedSlugs = [];
@@ -68,9 +71,12 @@ function addHeadingIds(string $html): string {
       $heading->setAttribute('id', $finalSlug);
     }
   }
-  $body = $dom->getElementsByTagName('body')->item(0);
+  $wrapper = $dom->getElementById('__wrapper__');
+  if ($wrapper === null) {
+    return $html;
+  }
   $result = '';
-  foreach ($body->childNodes as $child) {
+  foreach ($wrapper->childNodes as $child) {
     $result .= $dom->saveHTML($child);
   }
   return $result;
