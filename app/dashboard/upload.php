@@ -47,6 +47,16 @@ function saveAsWebp(string $tmpPath, string $extension, string $destFolder, stri
     return ['filename' => $filename, 'skippedConversion' => true];
   }
 
+  // Compare the sizes of the original and converted images
+  $webpSize = filesize($destPath);
+  $originalSize = filesize($tmpPath);
+ 
+  if ($webpSize !== false && $originalSize !== false && $webpSize >= $originalSize) {
+    unlink($destPath);
+    $filename = $baseName . '.' . $extension;
+    return ['filename' => $filename, 'skippedConversion' => true];
+  }
+
   return ['filename' => $filename, 'skippedConversion' => false];
 }
 
