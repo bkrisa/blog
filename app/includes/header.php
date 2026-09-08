@@ -67,6 +67,8 @@ if (!defined('SECURE_ACCESS')) {
   <meta property="og:image" content="<?php echo htmlspecialchars($ogImage); ?>">
 
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@<?php echo htmlspecialchars($settings['site']['twitter_handle']); ?>">
+  <meta name="twitter:creator" content="@<?php echo htmlspecialchars($settings['site']['twitter_handle']); ?>">
   <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
   <meta name="twitter:description" content="<?php echo htmlspecialchars($page_description); ?>">
   <meta name="twitter:image" content="<?php echo htmlspecialchars($ogImage); ?>">
