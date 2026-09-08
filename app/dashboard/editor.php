@@ -52,7 +52,13 @@ require_once __DIR__ . '/../includes/header.php';
       autofocus
       value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>"
     >
-
+    <input
+      type="text"
+      name="slug"
+      class="post-slug"
+      placeholder="post-url"
+      value="<?php echo htmlspecialchars($post['slug'] ?? ''); ?>"
+    >
     <input
       type="text"
       name="tags"

@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/tailscale_auth.php';
+verifyTailscaleAccess();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   header('Location: editor.php');
@@ -11,6 +13,7 @@ $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : null;
 $title = trim($_POST['title'] ?? '');
 $content = trim($_POST['content'] ?? '');
 $tagsInput = trim($_POST['tags'] ?? '');
+$requestedSlug = trim($_POST['slug'] ?? '');
 $status = ($_POST['status'] ?? 'draft') === 'published' ? 'published' : 'draft';
 
 if ($title === '' || $content === '') {
@@ -44,29 +47,25 @@ function slugify(string $text): string {
   return trim($text, '-');
 }
 
-/**
- * Description generation (~160 characters)
- */
+// Description generation (~160 characters)
 function generateExcerpt(string $html, int $length = 160): string {
   $text = trim(strip_tags($html));
   $text = preg_replace('/\s+/', ' ', $text);
-
   if (mb_strlen($text) <= $length) {
     return $text;
   }
-
   $truncated = mb_substr($text, 0, $length);
   $lastSpace = mb_strrpos($truncated, ' ');
-
   if ($lastSpace !== false) {
     $truncated = mb_substr($truncated, 0, $lastSpace);
   }
-
   return $truncated . '…';
 }
 
 $db = new Database();
 $isEdit = false;
+
+$baseSlug = $requestedSlug !== '' ? slugify($requestedSlug) : slugify($title);
 
 if ($postId) {
   $existingStmt = $db->prepare("SELECT id, slug FROM posts WHERE id = ?");
@@ -78,22 +77,21 @@ if ($postId) {
   }
 
   $isEdit = true;
-  $slug = $existing['slug'];
-} else {
-  // Ensuring slug uniqueness (title-2, title-3)
-  $baseSlug = slugify($title);
-  $slug = $baseSlug;
-  $counter = 2;
+}
+$slug = $baseSlug;
+$counter = 2;
+$checkStmt = $isEdit
+  ? $db->prepare("SELECT COUNT(*) FROM posts WHERE slug = ? AND id != ?")
+  : $db->prepare("SELECT COUNT(*) FROM posts WHERE slug = ?");
 
-  $checkStmt = $db->prepare("SELECT COUNT(*) FROM posts WHERE slug = ?");
-  while (true) {
-    $checkStmt->execute([$slug]);
-    if ($checkStmt->fetchColumn() == 0) {
-      break;
-    }
-    $slug = $baseSlug . '-' . $counter;
-    $counter++;
+while (true) {
+  $params = $isEdit ? [$slug, $postId] : [$slug];
+  $checkStmt->execute($params);
+  if ($checkStmt->fetchColumn() == 0) {
+    break;
   }
+  $slug = $baseSlug . '-' . $counter;
+  $counter++;
 }
 
 $excerpt = generateExcerpt($content);
@@ -104,10 +102,10 @@ try {
   if ($isEdit) {
     $stmt = $db->prepare("
       UPDATE posts
-      SET title = ?, content = ?, excerpt = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+      SET title = ?, slug = ?, content = ?, excerpt = ?, status = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     ");
-    $stmt->execute([$title, $content, $excerpt, $status, $postId]);
+    $stmt->execute([$title, $slug, $content, $excerpt, $status, $postId]);
 
     $db->prepare("DELETE FROM post_tags WHERE post_id = ?")->execute([$postId]);
   } else {
@@ -122,26 +120,21 @@ try {
   // Processing tags
   if ($tagsInput !== '') {
     $tagNames = array_filter(array_map('trim', explode(',', $tagsInput)));
-
     $findTagStmt = $db->prepare("SELECT id FROM tags WHERE slug = ?");
     $insertTagStmt = $db->prepare("INSERT INTO tags (title, slug) VALUES (?, ?)");
     $linkStmt = $db->prepare("INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)");
 
     foreach ($tagNames as $tagName) {
       $tagSlug = slugify($tagName);
-
       if ($tagSlug === '') {
         continue;
       }
-
       $findTagStmt->execute([$tagSlug]);
       $tagId = $findTagStmt->fetchColumn();
-
       if (!$tagId) {
         $insertTagStmt->execute([$tagName, $tagSlug]);
         $tagId = $db->lastInsertId();
       }
-
       $linkStmt->execute([$postId, $tagId]);
     }
   }
