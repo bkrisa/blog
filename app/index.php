@@ -17,7 +17,7 @@ $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $page_title = $settings['site']['name'];
-$page_description = $settings['site']['description'];
+$page_description = $settings['author']['description'];
 $page_url = $settings['site']['blog_url'];
 
 require_once __DIR__ . '/includes/header.php';
