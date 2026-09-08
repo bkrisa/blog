@@ -3,6 +3,7 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/settings.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/schema.php';
 
 $settings = loadSettings();
 $db = new Database();
@@ -34,7 +35,7 @@ $tagStmt->execute([$post['id']]);
 $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // schema
-//$schema = generate_blog_post_schema($settings, $post, $tags);
+$schema = generate_blog_post_schema($settings, $post, $tags);
 
 $firstImage = getFirstImage($post['content']);
 

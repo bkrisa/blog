@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/settings.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/includes/schema.php';
 
 $settings = loadSettings();
 $db = new Database();
@@ -36,7 +37,7 @@ $stmt->execute(['slug' => $slug]);
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // schema
-//$schema = generate_blog_tag_schema($settings, $tag, $posts);
+$schema = generate_blog_tag_schema($settings, $tag, $posts);
 
 $page_title = $tag['title'] . ' - ' . $settings['site']['name'];
 $page_description = "";
