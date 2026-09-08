@@ -80,7 +80,9 @@ if (!defined('SECURE_ACCESS')) {
   <!-- script -->
   <script src="<?php echo htmlspecialchars($root_path); ?>assets/js/main.js" defer></script>
   <?php foreach ($settings['scripts'] as $script): ?>
-    <script src="<?php echo htmlspecialchars($script['src']); ?>" type="<?php echo htmlspecialchars($script['type']); ?>"></script>
+    <script src="<?php echo htmlspecialchars($script['src']); ?>"
+      <?php echo !empty($script['async']) ? 'async' : (!empty($script['defer']) ? 'defer' : '') ?>
+    ></script>
   <?php endforeach; ?>
 
   <!-- styles -->
