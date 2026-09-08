@@ -3,6 +3,7 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/settings.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/schema.php';
 
 $settings = loadSettings();
 $db = new Database();
@@ -17,7 +18,7 @@ $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // schema
-//$schema = generate_blog_index_schema($settings, $posts);
+$schema = generate_blog_index_schema($settings, $posts);
 
 $page_title = $settings['site']['name'];
 $page_description = $settings['author']['description'];
