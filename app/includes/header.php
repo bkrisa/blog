@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Load settings from JSON file
-require_once __DIR__ . '/settings.php';
+require_once __DIR__ . '/../includes/settings.php';
 $settings = loadSettings();
 $root_path = getRootPath();
 
