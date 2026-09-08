@@ -35,6 +35,9 @@ $stmt = $db->prepare("
 $stmt->execute(['slug' => $slug]);
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// schema
+$schema = generate_blog_tag_schema($settings, $tag, $posts);
+
 $page_title = $tag['title'] . ' - ' . $settings['site']['name'];
 $page_description = "";
 $page_url = "";

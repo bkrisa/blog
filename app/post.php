@@ -33,6 +33,9 @@ $tagStmt = $db->prepare("
 $tagStmt->execute([$post['id']]);
 $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// schema
+$schema = generate_blog_post_schema($settings, $post, $tags);
+
 $firstImage = getFirstImage($post['content']);
 
 $page_image = $firstImage

@@ -16,6 +16,9 @@ $stmt = $db->prepare("
 $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// schema
+$schema = generate_blog_index_schema($settings, $posts);
+
 $page_title = $settings['site']['name'];
 $page_description = $settings['author']['description'];
 $page_url = $settings['site']['blog_url'];
