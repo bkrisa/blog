@@ -48,6 +48,10 @@ if (!defined('SECURE_ACCESS')) {
 
   <?php if(!$is_dashboard_page): ?>
     <meta name="robots" content="index, follow">
+    <?php
+      // Determine the Open Graph image to use
+      $ogImage = isset($page_image) ? $page_image : toAbsoluteUrl($root_path . 'assets/img/' . $settings['site']['logo']);
+    ?>
   <?php else: ?>
     <!-- dashboard -->
     <meta name="robots" content="noindex, nofollow">
@@ -55,10 +59,7 @@ if (!defined('SECURE_ACCESS')) {
     <link rel="stylesheet" href="<?php echo htmlspecialchars($root_path); ?>assets/css/dashboard.css">
   <?php endif; ?>
 
-  <?php
-    // Determine the Open Graph image to use
-    $ogImage = isset($page_image) ? $page_image : toAbsoluteUrl($root_path . 'assets/img/' . $settings['site']['logo']);
-  ?>
+
 
   <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
   <meta property="og:description" content="<?php echo htmlspecialchars($page_description); ?>">

@@ -11,6 +11,51 @@ if (!file_exists($uploadFolder)) {
   mkdir($uploadFolder, 0755, true);
 }
 
+// The saveAsWebp function attempts to convert an uploaded image to WebP format
+function saveAsWebp(string $tmpPath, string $extension, string $destFolder, string $baseName): array {
+  if ($extension === 'gif' && isAnimatedGif($tmpPath)) {
+    $filename = $baseName . '.gif';
+    return ['filename' => $filename, 'skippedConversion' => true];
+  }
+
+  if (!function_exists('imagewebp')) {
+    $filename = $baseName . '.' . $extension;
+    return ['filename' => $filename, 'skippedConversion' => true];
+  }
+
+  $imageData = file_get_contents($tmpPath);
+  $image = @imagecreatefromstring($imageData);
+
+  if ($image === false) {
+    $filename = $baseName . '.' . $extension;
+    return ['filename' => $filename, 'skippedConversion' => true];
+  }
+
+  // Ensure the image is in true color and has alpha blending enabled for transparency
+  imagepalettetotruecolor($image);
+  imagealphablending($image, true);
+  imagesavealpha($image, true);
+
+  $filename = $baseName . '.webp';
+  $destPath = $destFolder . $filename;
+
+  $success = imagewebp($image, $destPath, 82);
+  imagedestroy($image);
+
+  if (!$success) {
+    $filename = $baseName . '.' . $extension;
+    return ['filename' => $filename, 'skippedConversion' => true];
+  }
+
+  return ['filename' => $filename, 'skippedConversion' => false];
+}
+
+function isAnimatedGif(string $path): bool {
+  $contents = file_get_contents($path);
+  $frameCount = substr_count($contents, "\x00\x2C");
+  return $frameCount > 1;
+}
+
 if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
   $fileTmpPath = $_FILES['file']['tmp_name'];
   $fileName    = $_FILES['file']['name'];
@@ -28,17 +73,33 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
 
     $slug = preg_replace('/\s+/', '-', $unaccented);
     $cleanName = preg_replace('/[^a-zA-Z0-9\-_]/', '', $slug);
-    $cleanFileName = $cleanName . '.' . $fileExtension;
-    $destPath = $uploadFolder . $cleanFileName;
-    if (file_exists($destPath)) {
-      $cleanFileName = $cleanName . '-' . substr(uniqid(), -6) . '.' . $fileExtension;
-      $destPath = $uploadFolder . $cleanFileName;
+
+    $baseName = $cleanName;
+    $counter = 2;
+    while (
+      file_exists($uploadFolder . $baseName . '.webp')
+      || file_exists($uploadFolder . $baseName . '.' . $fileExtension)
+    ) {
+      $baseName = $cleanName . '-' . substr(uniqid(), -6);
+      if ($counter++ > 5) {
+        break;
+      }
     }
 
-    if (move_uploaded_file($fileTmpPath, $destPath)) {
+    $result = saveAsWebp($fileTmpPath, $fileExtension, $uploadFolder, $baseName);
+    $finalFileName = $result['filename'];
+    $destPath = $uploadFolder . $finalFileName;
+
+    if ($result['skippedConversion']) {
+      $moved = move_uploaded_file($fileTmpPath, $destPath);
+    } else {
+      $moved = file_exists($destPath);
+    }
+
+    if ($moved) {
       header('Content-Type: application/json');
       echo json_encode([
-        'location' => $root_path . 'uploads/' . $cleanFileName,
+        'location' => $root_path . 'uploads/' . $finalFileName,
         'alt'      => $cleanName
       ]);
       exit;
