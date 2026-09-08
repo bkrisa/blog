@@ -22,8 +22,8 @@ function sitemapUrl(string $loc, ?string $lastmod = null): void {
   echo "  </url>\n";
 }
 
-sitemapUrl($baseUrl . '/');
-sitemapUrl($blogUrl . '/');
+sitemapUrl($baseUrl);
+sitemapUrl($blogUrl);
 
 $stmt = $db->prepare("
   SELECT slug, created_at, updated_at
