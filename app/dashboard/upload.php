@@ -39,7 +39,7 @@ function saveAsWebp(string $tmpPath, string $extension, string $destFolder, stri
   $filename = $baseName . '.webp';
   $destPath = $destFolder . $filename;
 
-  $success = imagewebp($image, $destPath, 82);
+  $success = imagewebp($image, $destPath, 100);
   imagedestroy($image);
 
   if (!$success) {
