@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
 
@@ -18,33 +19,6 @@ $status = ($_POST['status'] ?? 'draft') === 'published' ? 'published' : 'draft';
 
 if ($title === '' || $content === '') {
   die('Title and content are required.');
-}
-
-function removeAccents(string $text): string {
-  $map = [
-    'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ö' => 'o', 'ő' => 'o',
-    'ú' => 'u', 'ü' => 'u', 'ű' => 'u',
-    'Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ö' => 'O', 'Ő' => 'O',
-    'Ú' => 'U', 'Ü' => 'U', 'Ű' => 'U',
-    'à' => 'a', 'â' => 'a', 'ä' => 'a', 'ã' => 'a', 'å' => 'a',
-    'ç' => 'c', 'č' => 'c',
-    'è' => 'e', 'ê' => 'e', 'ë' => 'e',
-    'ì' => 'i', 'î' => 'i', 'ï' => 'i',
-    'ñ' => 'n',
-    'ò' => 'o', 'ô' => 'o', 'õ' => 'o',
-    'ù' => 'u', 'û' => 'u',
-    'ý' => 'y', 'ÿ' => 'y',
-    'š' => 's', 'ž' => 'z',
-  ];
-  return strtr($text, $map);
-}
-
-// Slug generation
-function slugify(string $text): string {
-  $text = removeAccents($text);
-  $text = mb_strtolower($text, 'UTF-8');
-  $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-  return trim($text, '-');
 }
 
 // Description generation (~160 characters)

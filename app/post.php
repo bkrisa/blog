@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/settings.php';
+require_once __DIR__ . '/includes/functions.php';
 
 $settings = loadSettings();
 $db = new Database();
@@ -60,7 +61,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <div class="post-content">
-      <?php echo $post['content']; ?>
+      <?php echo addHeadingIds($post['content']); ?>
     </div>
   </article>
 
