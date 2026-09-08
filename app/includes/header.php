@@ -55,19 +55,24 @@ if (!defined('SECURE_ACCESS')) {
     <link rel="stylesheet" href="<?php echo htmlspecialchars($root_path); ?>assets/css/dashboard.css">
   <?php endif; ?>
 
+  <?php
+    // Determine the Open Graph image to use
+    $ogImage = isset($page_image) ? $page_image : toAbsoluteUrl($root_path . 'assets/img/' . $settings['site']['logo']);
+  ?>
+
   <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
   <meta property="og:description" content="<?php echo htmlspecialchars($page_description); ?>">
   <meta property="og:url" content="<?php echo htmlspecialchars($page_url); ?>">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="<?php echo htmlspecialchars($settings['site']['name']); ?>">
-  <meta property="og:image" content="<?php echo htmlspecialchars($settings['site']['logo']); ?>">
+  <meta property="og:image" content="<?php echo htmlspecialchars($ogImage); ?>">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
   <meta name="twitter:description" content="<?php echo htmlspecialchars($page_description); ?>">
-  <meta name="twitter:image" content="<?php echo htmlspecialchars($settings['site']['logo']); ?>">
+  <meta name="twitter:image" content="<?php echo htmlspecialchars($ogImage); ?>">
   <meta name="twitter:image:alt" content="<?php echo htmlspecialchars($settings['site']['name']); ?>">
-  <meta name="twitter:image:src" content="<?php echo htmlspecialchars($settings['site']['logo']); ?>">
+  <meta name="twitter:image:src" content="<?php echo htmlspecialchars($ogImage); ?>">
   <meta name="twitter:widgets:csp" content="on">
 
   <link rel="canonical" href="<?php echo htmlspecialchars($page_url); ?>" />

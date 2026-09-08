@@ -33,6 +33,12 @@ $tagStmt = $db->prepare("
 $tagStmt->execute([$post['id']]);
 $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
+$firstImage = getFirstImage($post['content']);
+
+$page_image = $firstImage
+  ? toAbsoluteUrl($firstImage)
+  : toAbsoluteUrl($root_path . 'assets/img/' . $settings['site']['logo']);
+
 $page_title = $post['title'];
 $page_description = $post['excerpt'] ?? '';
 $page_url = rtrim($settings['site']['blog_url'], '/') . '/' . $post['slug'];

@@ -6,6 +6,13 @@ function getFirstImage(string $html): ?string {
   }
   return null;
 }
+ 
+// Converts a relative path to an absolute URL based on the current request's scheme and host
+function toAbsoluteUrl(string $path): string {
+  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host = $_SERVER['HTTP_HOST'] ?? '';
+  return $scheme . '://' . $host . $path;
+}
 
 // Generates a safe description for meta tags by stripping HTML tags and limiting the length
 function removeAccents(string $text): string {
