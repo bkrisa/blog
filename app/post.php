@@ -114,8 +114,14 @@ require_once __DIR__ . '/includes/header.php';
   </script>
 
   <div class="author-bio">
-    <h3><?php echo htmlspecialchars($settings['author']['name']); ?></h3>
-    <p><?php echo getSafeDescription($settings['author']['description'] ?? ''); ?></p>
+    <b>Written by</b>
+    <div class="author-info">
+      <img src="<?php echo htmlspecialchars($settings['site']['logo']); ?>" alt="<?php echo htmlspecialchars($settings['author']['name']); ?>">
+      <div>
+        <h3><?php echo htmlspecialchars($settings['author']['name']); ?></h3>
+        <p><?php echo getSafeDescription($settings['author']['description'] ?? ''); ?></p>
+      </div>
+    </div>
   </div>
 </div>
 

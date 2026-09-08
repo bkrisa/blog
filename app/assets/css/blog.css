@@ -75,8 +75,21 @@ time {font-size: 14px; margin-bottom: 6px; display: block;}
 }
 .post-content hr {margin: 20px 0;}
 .post-content .twitter-tweet {margin: 0 auto;}
-.author-bio {margin-top: 40px;border-top: 1px solid #eee;}
+.author-bio {margin-top: 40px;padding-top: 20px;border-top: 1px solid #eee;}
 .author-bio a {display: inline;}
+.author-bio b {display: block;margin-bottom: 10px;}
+.author-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.author-info img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
 /* footer */
 footer {
