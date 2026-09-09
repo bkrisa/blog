@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/settings.php';
 require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/includes/schema.php';
+require_once __DIR__ . '/../includes/schema.php';
 
 $settings = loadSettings();
 $db = new Database();
