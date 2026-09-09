@@ -80,6 +80,7 @@ if (!defined('SECURE_ACCESS')) {
   <meta name="twitter:widgets:csp" content="on">
 
   <link rel="canonical" href="<?php echo htmlspecialchars($page_url); ?>" />
+  <link rel="alternate" type="application/rss+xml" title="<?php echo htmlspecialchars($settings['site']['name']); ?>" href="<?php echo htmlspecialchars(rtrim($settings['site']['blog_url'], '/')); ?>/rss">
 
   <!-- favicon -->
   <?php if (!empty($settings['site']['logo'])): ?>
