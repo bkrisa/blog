@@ -54,7 +54,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
   <link><?php echo htmlspecialchars($blogUrl); ?></link>
   <description><?php echo htmlspecialchars($settings['author']['description'] ?? ''); ?></description>
   <language>en-us</language>
-  <atom:link href="<?php echo htmlspecialchars($blogUrl); ?>/rss.php" rel="self" type="application/rss+xml" />
+  <atom:link href="<?php echo htmlspecialchars($blogUrl); ?>/rss" rel="self" type="application/rss+xml" />
   <lastBuildDate><?php echo htmlspecialchars($lastBuildDate); ?></lastBuildDate>
 
   <?php foreach ($posts as $post): ?>
