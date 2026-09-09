@@ -121,7 +121,14 @@ if (!defined('SECURE_ACCESS')) {
     </a>
 
     <?php if (!$is_dashboard_page): ?>
-      <nav>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle">
+      <label for="nav-toggle" class="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <nav class="nav">
         <ul>
           <?php foreach ($settings['navigation'] as $item): ?>
             <li>

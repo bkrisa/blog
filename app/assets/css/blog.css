@@ -26,6 +26,7 @@ header {
   margin-bottom: 20px;
   border-bottom: 1px solid #eee;
   font-size: 15px;
+  position: relative;
 }
 .logo-area {
   display: flex;
@@ -40,8 +41,44 @@ header {
   margin-right: 10px;
   border-radius: 8px;
 }
-header nav ul {display: flex;gap: 20px;flex-wrap: wrap; list-style: none;}
+header nav ul {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 header nav a {text-decoration: none;color: var(--text);}
+.nav-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.hamburger {
+  display: none;
+  width: 22px;
+  height: 16px;
+  cursor: pointer;
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--heading);
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.hamburger span:nth-child(1) { top: 0; }
+.hamburger span:nth-child(2) { top: 7px; }
+.hamburger span:nth-child(3) { top: 14px; }
 
 /* blog */
 .post-list article {display: flex;gap: 12px;padding: 20px 0;}
@@ -119,6 +156,33 @@ footer ul {
 .error-page p {color: var(--text);margin-bottom: 20px;}
 
 @media (max-width: 600px) {
+  /* header */
+  .hamburger {display: block;}
+  header nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid #eee;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    z-index: 15;
+  }
+  header nav ul {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 8px 0 12px;
+  }
+  header nav a {display: block;padding: 10px 0;}
+  .nav-toggle:checked ~ nav {max-height: 280px;}
+  .nav-toggle:checked + .hamburger span:nth-child(1) {transform: translateY(6px) rotate(45deg);}
+  .nav-toggle:checked + .hamburger span:nth-child(2) {opacity: 0;}
+  .nav-toggle:checked + .hamburger span:nth-child(3) {transform: translateY(-8px) rotate(-45deg);}
+
+  /* blog */
   .post-list article {flex-direction: column;}
   .post-thumbnail-link {width: 100%;}
 }
