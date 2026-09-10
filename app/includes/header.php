@@ -89,10 +89,10 @@ if (!defined('SECURE_ACCESS')) {
 
   <!-- script -->
   <script src="<?php echo htmlspecialchars($root_path); ?>assets/js/main.js" defer></script>
-  <?php foreach ($settings['scripts'] as $script): ?>
-    <script src="<?php echo htmlspecialchars($script['src']); ?>"
-      <?php echo !empty($script['async']) ? 'async' : (!empty($script['defer']) ? 'defer' : '') ?>
-    ></script>
+
+  <!-- Load additional head items from settings -->
+  <?php foreach ($settings['head'] as $head_item): ?>
+    <?php echo $head_item['html']; ?>
   <?php endforeach; ?>
 
   <!-- styles -->

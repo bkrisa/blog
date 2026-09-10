@@ -113,8 +113,8 @@ Copy the example below into `app/settings.json` and adjust it to your site:
       "primary": "Arial"
     }
   },
-  "scripts": [
-    { "src": "https://your-analytics-script.example.com/latest.js", "async": true }
+  "head": [
+    { "html": "<script src=\"https://your-analytics-script.example.com/latest.js\" async></script>" }
   ],
   "navigation": [
     { "label": "home", "url": "https://example.com" },
