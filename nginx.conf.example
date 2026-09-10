@@ -1,0 +1,257 @@
+# OpenBlog - example Nginx configuration
+#
+# This file shows TWO installation styles. Use only ONE of them -
+# delete the other before using this as your real config.
+#
+# Replace these placeholders throughout:
+#   your-domain.com          -> your actual domain
+#   /path/to/openblog/app    -> the ABSOLUTE path to the app/ subfolder
+#                                (never point at the repository root!)
+#   php-fpm.sock             -> your PHP-FPM pool's socket path
+#
+# See docs/tailscale-setup.md for the matching dashboard-only server
+# block (the "listen 80; server_name your-hostname.your-tailnet.ts.net"
+# block) - it's intentionally kept separate from this file.
+#
+
+# Rate limiting zone - shared by both installation options below.
+# This must live at the top level of nginx.conf (outside any server
+# block), typically inside the existing `http { ... }` block your
+# distro's nginx.conf already provides.
+#
+# 30 requests/second with a burst of 10 is a reasonable default for a
+# small personal blog - adjust `rate` upward if you expect real
+# traffic spikes (e.g. a post going viral).
+
+limit_req_zone $binary_remote_addr zone=openblog_general:10m rate=30r/s;
+
+# ============================================================
+# OPTION A - Installed at your domain root (your-domain.com)
+# ============================================================
+
+server {
+  listen 80;
+  server_name your-domain.com;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  server_name your-domain.com;
+  root /path/to/openblog/app;
+  index index.php;
+
+  ssl_certificate     /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+  charset utf-8;
+  autoindex off;
+
+  error_page 500 502 503 504 /50x.html;
+
+  add_header X-Frame-Options "SAMEORIGIN" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+  # Pretty URLs for posts: /post-slug -> post.php?slug=post-slug
+  location ~ ^/([a-zA-Z0-9-]+)/?$ {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/post.php;
+    fastcgi_param QUERY_STRING slug=$1;
+  }
+
+  # Pretty URLs for tags: /tag/tag-slug -> tags.php?slug=tag-slug
+  location ~ ^/tag/([a-zA-Z0-9-]+)/?$ {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/tag/tag.php;
+    fastcgi_param QUERY_STRING slug=$1;
+  }
+
+  location = /rss {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/rss.php;
+  }
+
+  location = /llms.txt {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/llms.txt.php;
+  }
+
+  location = /sitemap.xml {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/sitemap.php;
+  }
+
+  # The dashboard is blocked here on the public domain
+  location ^~ /dashboard/ {
+    deny all;
+    return 404;
+  }
+
+  location ^~ /includes/ {
+    deny all;
+    return 403;
+  }
+
+  location ~ \.(db|bak|old|sql|sqlite|sqlite3|log|env|git|htaccess|ini|conf|json|md|sh|yml|yaml)$ {
+    deny all;
+    return 404;
+  }
+
+  location ~ /\.(?!well-known) {
+    deny all;
+    access_log off;
+    log_not_found off;
+  }
+
+  # Generic PHP handling
+  location ~ \.php$ {
+    try_files $uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param PATH_INFO $fastcgi_path_info;
+  }
+
+  location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|webp|woff2?)$ {
+    expires 31536000s;
+    access_log off;
+    add_header Cache-Control "public, no-transform, immutable" always;
+    try_files $uri =404;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+}
+
+
+# ============================================================
+# OPTION B - Installed in a subfolder (your-domain.com/blog),
+# alongside an existing, separately-managed main site
+# ============================================================
+#
+# This assumes your main site's server block already exists elsewhere
+# and points its own `root` at your main site's files. Add the
+# following INSIDE that existing server block - do not create a
+# second server block for the same domain. The limit_req_zone
+# declaration above still applies here too (it's shared, top-level).
+
+  location = /blog/ {
+    return 301 /blog;
+  }
+
+  location = /blog {
+    limit_req zone=openblog_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/index.php;
+  }
+
+  location ^~ /blog/ {
+    alias /path/to/openblog/app/;
+    index index.php;
+    try_files $uri $uri/ /blog/index.php?$args;
+
+    location ~ ^/blog/tag/([a-zA-Z0-9-]+)/?$ {
+      limit_req zone=openblog_general burst=10 nodelay;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/tags.php;
+      fastcgi_param QUERY_STRING slug=$1;
+    }
+
+    location ~ ^/blog/([a-zA-Z0-9-]+)/?$ {
+      limit_req zone=openblog_general burst=10 nodelay;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/post.php;
+      fastcgi_param QUERY_STRING slug=$1;
+    }
+
+    location = /blog/rss {
+      limit_req zone=openblog_general burst=10 nodelay;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/rss.php;
+    }
+
+    location = /blog/llms.txt {
+      limit_req zone=openblog_general burst=10 nodelay;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/llms.txt.php;
+    }
+
+    location = /blog/sitemap.xml {
+      limit_req zone=openblog_general burst=10 nodelay;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/sitemap.php;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|svg|webp|woff2?)$ {
+      expires 31536000s;
+      access_log off;
+      add_header Cache-Control "public, no-transform, immutable" always;
+      try_files $uri =404;
+    }
+
+    location ~ ^/blog/(.+\.php)$ {
+      alias /path/to/openblog/app/$1;
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      fastcgi_pass unix:/run/php/php-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME $request_filename;
+      fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+
+    location ^~ /blog/dashboard/ {
+      deny all;
+      return 404;
+    }
+
+    location ^~ /blog/includes/ {
+      deny all;
+      return 403;
+    }
+
+    location ~ \.(db|bak|old|sql|sqlite|sqlite3|log|env|git|htaccess|ini|conf|json|md|sh|yml|yaml)$ {
+      deny all;
+      return 404;
+    }
+
+    location ~ /\.(?!well-known) {
+      deny all;
+      access_log off;
+      log_not_found off;
+    }
+  }
+
+# ============================================================
+# End of Option B snippet
+# ============================================================
