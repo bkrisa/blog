@@ -62,7 +62,7 @@ require_once __DIR__ . '/includes/header.php';
       <?php if (!empty($tags)): ?>
         <div class="post-tags">
           <?php foreach ($tags as $tag): ?>
-            <a href="<?php echo htmlspecialchars($root_path . 'tags/' . $tag['slug']); ?>">
+            <a href="<?php echo htmlspecialchars($root_path . 'tag/' . $tag['slug']); ?>">
               <?php echo htmlspecialchars($tag['title']); ?>
             </a>
           <?php endforeach; ?>
