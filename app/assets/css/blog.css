@@ -107,6 +107,13 @@ header nav a {text-decoration: none;color: var(--text);}
   margin-inline: auto;
 }
 .post-content hr {margin: 20px 0;}
+.post-content code {
+  padding: 2px 4px;
+  border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  overflow-wrap: anywhere;
+}
 .post-content .twitter-tweet {margin: 0 auto;}
 .author-bio {margin-top: 40px;padding-top: 20px;border-top: 1px solid #eee;}
 .author-bio a {display: inline;}
