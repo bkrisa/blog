@@ -91,15 +91,11 @@ header nav a {text-decoration: none;color: var(--text);}
 /* post */
 .post-header {margin-bottom: 20px;}
 .post-header h1 {margin-bottom: 4px;}
-time {font-size: 14px; margin-bottom: 6px; display: block;}
-.post-tags a {
-  padding: .15rem .7rem;
-  margin-right: 4px;
-  border: 1px solid #eee;
-  border-radius: 100px;
-  font-size: 13px;
-}
-.post-tags a:hover {border-color: var(--main);text-decoration: none;}
+.post-meta {font-size: 14px; margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 8px;}
+.post-tags {display: flex;flex-wrap: wrap;gap: 8px;}
+.post-tags a {text-decoration: underline;}
+.post-tags a:hover {text-decoration: none;}
+.post-tags a:not(:last-child)::after {content: ',';}
 .post-content {margin-bottom: 20px;}
 .post-content ul, .post-content ol {margin-left: 30px;margin-bottom: 1rem;}
 .post-content img {

@@ -55,19 +55,20 @@ require_once __DIR__ . '/includes/header.php';
     <div class="post-header">
       <h1><?php echo htmlspecialchars($post['title']); ?></h1>
 
-      <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
-        <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
-      </time>
+      <div class="post-meta">
+        <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
+          <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
+        </time>
 
-      <?php if (!empty($tags)): ?>
-        <div class="post-tags">
-          <?php foreach ($tags as $tag): ?>
-            <a href="<?php echo htmlspecialchars($root_path . 'tag/' . $tag['slug']); ?>">
-              <?php echo htmlspecialchars($tag['title']); ?>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
+        <?php if (!empty($tags)): ?>
+          -
+          <div class="post-tags">
+            <?php foreach ($tags as $tag): ?>
+              <a href="<?php echo htmlspecialchars($root_path . 'tag/' . $tag['slug']); ?>"><?php echo htmlspecialchars($tag['title']); ?></a>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+      </div>
     </div>
 
     <div class="post-content">
