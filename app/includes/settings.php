@@ -27,6 +27,6 @@ function loadSettings(): array {
 // Ensure $root_path always exists
 function getRootPath(): string {
   $settings = loadSettings();
-  $basePath = $settings['site']['base_url'] ?? '/';
+  $basePath = $settings['site']['blog_url'] ?? '/';
   return rtrim($basePath, '/') . '/';
 }
