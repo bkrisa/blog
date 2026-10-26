@@ -4,6 +4,7 @@
 /.vscode/
 .cursor/
 .env
+.freebuff
 settings.json
 app/uploads/
 bkrisa.webp
