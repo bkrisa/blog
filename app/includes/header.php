@@ -88,7 +88,7 @@ if (!defined('SECURE_ACCESS')) {
   <?php endif; ?>
 
   <!-- script -->
-  <script src="<?php echo htmlspecialchars($root_path); ?>assets/js/main.js" defer></script>
+  <script src="<?php echo htmlspecialchars($root_path); ?>/assets/js/main.js" defer></script>
 
   <!-- Load additional head items from settings -->
   <?php foreach ($settings['head'] as $head_item): ?>
@@ -96,7 +96,7 @@ if (!defined('SECURE_ACCESS')) {
   <?php endforeach; ?>
 
   <!-- styles -->
-  <link rel="stylesheet" href="<?php echo htmlspecialchars($root_path); ?>assets/css/blog.css">
+  <link rel="stylesheet" href="<?php echo htmlspecialchars($root_path); ?>/assets/css/blog.css">
   <style>
     :root {
       --main: <?php echo htmlspecialchars($settings['design']['colors']['main']) ?>;

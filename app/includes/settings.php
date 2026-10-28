@@ -28,5 +28,5 @@ function loadSettings(): array {
 function getRootPath(): string {
   $settings = loadSettings();
   $basePath = $settings['site']['blog_url'] ?? '/';
-  return rtrim($basePath, '/') . '/';
+  return rtrim($basePath, '/');
 }
