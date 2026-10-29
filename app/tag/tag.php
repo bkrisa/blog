@@ -40,8 +40,8 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $schema = generate_blog_tag_schema($settings, $tag, $posts);
 
 $page_title = $tag['title'] . ' - ' . $settings['site']['name'];
-$page_description = "";
-$page_url = "";
+$page_description = 'Posts tagged ' . $tag['title'];
+$page_url = rtrim($settings['site']['blog_url'], '/') . '/' . $tag['slug'];
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
