@@ -65,20 +65,36 @@ function addHeadingIds(string $html): string {
     $headings = $dom->getElementsByTagName($tag);
     foreach ($headings as $heading) {
       if ($heading->hasAttribute('id')) {
+        $finalSlug = $heading->getAttribute('id');
+        $usedSlugs[] = $finalSlug;
+      } else {
+        $slug = slugify($heading->textContent);
+        if ($slug === '') {
+          continue;
+        }
+        $finalSlug = $slug;
+        $counter = 2;
+        while (in_array($finalSlug, $usedSlugs, true)) {
+          $finalSlug = $slug . '-' . $counter;
+          $counter++;
+        }
+        $usedSlugs[] = $finalSlug;
+        $heading->setAttribute('id', $finalSlug);
+      }
+      
+      // It is already contains a link, skip it
+      if ($heading->getElementsByTagName('a')->length > 0) {
         continue;
       }
-      $slug = slugify($heading->textContent);
-      if ($slug === '') {
-        continue;
+      
+      $link = $dom->createElement('a');
+      $link->setAttribute('href', '#' . $finalSlug);
+      $link->setAttribute('class', 'heading-link');
+
+      while ($heading->firstChild) {
+        $link->appendChild($heading->firstChild);
       }
-      $finalSlug = $slug;
-      $counter = 2;
-      while (in_array($finalSlug, $usedSlugs, true)) {
-        $finalSlug = $slug . '-' . $counter;
-        $counter++;
-      }
-      $usedSlugs[] = $finalSlug;
-      $heading->setAttribute('id', $finalSlug);
+      $heading->appendChild($link);
     }
   }
   $wrapper = $dom->getElementById('__wrapper__');
