@@ -44,7 +44,6 @@ require_once __DIR__ . '/../includes/header.php';
         <a
           class="tag-list-item"
           href="<?php echo htmlspecialchars($root_path . 'tag/' . $tag['slug']); ?>"
-          title="<?= (int)$tag['post_count'] ?> post<?= $tag['post_count'] == 1 ? '' : 's' ?>"
         >
           <?php echo htmlspecialchars($tag['title']) ?>
           <span class="tag-list-count"><?= (int)$tag['post_count'] ?></span>
