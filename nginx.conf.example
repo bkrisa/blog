@@ -166,6 +166,18 @@ server {
     fastcgi_param SCRIPT_FILENAME /path/to/openblog/app/index.php;
   }
 
+  location = /blog/tag/ {
+    return 301 /blog/tag;
+  }
+
+  location = /blog/tag {
+    limit_req zone=bkrisa_general burst=10 nodelay;
+    fastcgi_pass unix:/run/php/bkrisa.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /srv/www/bkrisa.com/blog/app/tag/index.php;
+  }
+
   location ^~ /blog/ {
     alias /path/to/openblog/app/;
     index index.php;
