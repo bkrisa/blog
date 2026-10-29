@@ -76,45 +76,37 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </article>
 
-  <!-- Twitter widgets -->
-  <script>
-    window.twttr = (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0],
-        t = window.twttr || {};
-      if (d.getElementById(id)) return t;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://platform.twitter.com/widgets.js";
-      fjs.parentNode.insertBefore(js, fjs);
-
-      t._e = [];
-      t.ready = function(f) {
-        t._e.push(f);
-      };
-
-      return t;
-    }(document, "script", "twitter-wjs"));
-  </script>
-
-  <!-- Automatically convert tweet links to blockquotes -->
+  <!-- Convert standalone tweet URLs to embedded tweets -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const links = document.querySelectorAll('.post-content a');
+      const tweetPattern = /^https?:\/\/(www\.)?(twitter|x)\.com\/[a-zA-Z0-9_]+\/status\/\d+/;
+      const normalize = s => s.trim().replace(/\/+$/, '');
+      let converted = 0;
 
-      links.forEach(link => {
+      document.querySelectorAll('.post-content a').forEach(link => {
         const url = link.href;
-        if (url.match(/^https?:\/\/(www\.)?(twitter|x)\.com\/[a-zA-Z0-9_]+\/status\/\d+/)) {
-          const blockquote = document.createElement('blockquote');
-          blockquote.className = 'twitter-tweet';
-          blockquote.innerHTML = `<a href="${url}"></a>`;
+        if (!tweetPattern.test(url)) return;
 
-          link.parentNode.replaceChild(blockquote, link);
-        }
+        const paragraph = link.parentElement;
+        if (!paragraph || paragraph.tagName !== 'P') return;
+        if (normalize(paragraph.textContent) !== normalize(link.textContent)) return;
+        if (normalize(link.textContent) !== normalize(link.getAttribute('href'))) return;
+
+        const blockquote = document.createElement('blockquote');
+        blockquote.className = 'twitter-tweet';
+        blockquote.innerHTML = `<a href="${url}"></a>`;
+        paragraph.replaceWith(blockquote);
+        converted++;
       });
 
-      window.twttr.ready(function(twttr) {
-        twttr.widgets.load();
-      });
+      // widgets.js only loads if there is a tweet on the page
+      if (converted > 0) {
+        const s = document.createElement('script');
+        s.src = 'https://platform.twitter.com/widgets.js';
+        s.async = true;
+        s.charset = 'utf-8';
+        document.body.appendChild(s);
+      }
     });
   </script>
 
