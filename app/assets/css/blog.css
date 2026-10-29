@@ -134,6 +134,17 @@ header nav a {text-decoration: none;color: var(--text);}
   border-radius: 50%;
 }
 
+/* tags */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14px;
+}
+.tag-list-item {line-height: 1.2;}
+.tag-list-count {opacity: 0.5;color: var(--text);}
+
 /* footer */
 footer {
   margin-top: 40px;
