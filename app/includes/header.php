@@ -53,7 +53,7 @@ if (!defined('SECURE_ACCESS')) {
     <meta name="robots" content="index, follow">
     <?php
       // Determine the Open Graph image to use
-      $ogImage = isset($page_image) ? $page_image : toAbsoluteUrl($root_path . 'assets/img/' . $settings['site']['logo']);
+      $ogImage = isset($page_image) ? $page_image : toAbsoluteUrl($settings['site']['logo']);
     ?>
   <?php else: ?>
     <!-- dashboard -->
