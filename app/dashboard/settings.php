@@ -6,19 +6,6 @@ require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
 requireSameOrigin();
 
-if (session_status() === PHP_SESSION_NONE) {
-  session_set_cookie_params([
-    'httponly' => true,
-    'samesite' => 'Strict',
-    'secure'   => !empty($_SERVER['HTTPS']),
-  ]);
-  session_start();
-}
-if (empty($_SESSION['csrf'])) {
-  $_SESSION['csrf'] = bin2hex(random_bytes(32));
-}
-$csrf = $_SESSION['csrf'];
-
 // Helpers
 function st_h($v): string {
   return htmlspecialchars((string)$v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
