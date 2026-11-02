@@ -146,7 +146,7 @@ if (!defined('SECURE_ACCESS')) {
             <a href="/blog/dashboard/">Dashboard</a>
           </li>
           <li>
-            <a href="/blog/settings">Settings</a>
+            <a href="/blog/dashboard/settings.php">Settings</a>
           </li>
         </ul>
       </nav>
