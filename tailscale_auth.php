@@ -1,7 +1,7 @@
 <?php
 function verifyTailscaleAccess(): void {
   // There is nothing to check in a development environment (localhost)
-  if (($_SERVER['HTTP_HOST'] ?? '') === 'localhost') {
+  if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
     return;
   }
 
