@@ -129,21 +129,6 @@ $data = $current;
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // CSRF: same-origin check (when the browser sends Origin) + session token.
-  $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-  if ($origin !== '') {
-    $originHost = parse_url($origin, PHP_URL_HOST);
-    $reqHost = preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'] ?? '');
-    if (!$originHost || strcasecmp($originHost, $reqHost) !== 0) {
-      http_response_code(403);
-      die('Cross-origin request blocked.');
-    }
-  }
-  if (!hash_equals($_SESSION['csrf'], (string)($_POST['csrf'] ?? ''))) {
-    http_response_code(403);
-    die('Invalid CSRF token. Reload the page and try again.');
-  }
-
   // Build the candidate settings. Start from the current file so any keys this
   // form doesn't know about are preserved.
   $candidate = $current;
@@ -283,8 +268,6 @@ require_once __DIR__ . '/../includes/header.php';
   <?php endif; ?>
 
   <form action="settings.php" method="POST" autocomplete="off">
-    <input type="hidden" name="csrf" value="<?= st_h($csrf) ?>">
-
     <fieldset>
       <legend>Site</legend>
       <label for="site_name">Blog name</label>
