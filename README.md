@@ -138,7 +138,7 @@ Copy the example below into `app/settings.json` and adjust it to your site:
 | `site.twitter_handle` | Your X/Twitter handle, without the `@`, used for Twitter Card meta tags. |
 | `author.name` / `author.description` | Shown in the author bio under each post. HTML is allowed in the description (e.g. a link), but it is sanitized — only `<a>` tags survive, and `javascript:` links and inline event handlers are stripped. |
 | `design.colors` / `design.fonts` | Basic theming — these become CSS custom properties. |
-| `scripts` | Optional array of external `<script>` tags to include site-wide (e.g. analytics). |
+| `head` | Optional array of external `<script>` tags to include site-wide (e.g. analytics). |
 | `navigation` | The links shown in the site header. |
 | `social_links` | Shown in the footer, and used to populate the `twitter:site` meta tag when a `platform: "X"` entry is present. |
 
