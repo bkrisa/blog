@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/settings.php';
+require_once __DIR__ . '/../includes/same_origin.php';
 require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
+requireSameOrigin();
 
 $root_path = getRootPath();
 $uploadFolder = __DIR__ . '/../uploads/';

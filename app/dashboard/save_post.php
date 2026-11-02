@@ -2,8 +2,10 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/same_origin.php';
 require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
+requireSameOrigin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   header('Location: editor.php');
