@@ -6,6 +6,7 @@
 .env
 .freebuff
 settings.json
+settings.json.bak
 app/uploads/
 bkrisa.webp
 nginx.conf

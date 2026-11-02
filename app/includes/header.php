@@ -145,6 +145,9 @@ if (!defined('SECURE_ACCESS')) {
           <li>
             <a href="/blog/dashboard/">Dashboard</a>
           </li>
+          <li>
+            <a href="/blog/settings">Settings</a>
+          </li>
         </ul>
       </nav>
     <?php endif; ?>
