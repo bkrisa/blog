@@ -1,0 +1,37 @@
+{
+  "site": {
+    "name": "Your blog's name",
+    "base_url": "https://example.com",
+    "blog_url": "https://example.com/blog",
+    "logo": "https://example.com/logo.webp",
+    "author_img": "https://example.com/logo.webp",
+    "twitter_handle": "yourhandle"
+  },
+  "author": {
+    "name": "Your name",
+    "description": "A short bio, HTML allowed (e.g. <a href=\"https://example.com/\">links</a>)."
+  },
+  "design": {
+    "colors": {
+      "main": "#188ddb",
+      "heading": "#282828",
+      "text": "#6d6d6d",
+      "bg": "#ffffff"
+    },
+    "fonts": {
+      "primary": "Arial"
+    }
+  },
+  "head": [
+    { "html": "<script src=\"https://your-analytics-script.example.com/latest.js\" async></script>" }
+  ],
+  "navigation": [
+    { "label": "home", "url": "https://example.com" },
+    { "label": "blog", "url": "https://example.com/blog" },
+    { "label": "rss", "url": "https://example.com/blog/rss" }
+  ],
+  "social_links": [
+    { "platform": "X", "url": "https://x.com/yourhandle" },
+    { "platform": "github", "url": "https://github.com/yourhandle" }
+  ]
+}
