@@ -34,6 +34,27 @@ $tagStmt = $db->prepare("
 $tagStmt->execute([$post['id']]);
 $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Previous (older) and next (newer) published posts
+$prevStmt = $db->prepare("
+  SELECT title, slug, created_at FROM posts
+  WHERE status = 'published'
+    AND (created_at < ? OR (created_at = ? AND id < ?))
+  ORDER BY created_at DESC, id DESC
+  LIMIT 1
+");
+$prevStmt->execute([$post['created_at'], $post['created_at'], $post['id']]);
+$prevPost = $prevStmt->fetch(PDO::FETCH_ASSOC);
+
+$nextStmt = $db->prepare("
+  SELECT title, slug, created_at FROM posts
+  WHERE status = 'published'
+    AND (created_at > ? OR (created_at = ? AND id > ?))
+  ORDER BY created_at ASC, id ASC
+  LIMIT 1
+");
+$nextStmt->execute([$post['created_at'], $post['created_at'], $post['id']]);
+$nextPost = $nextStmt->fetch(PDO::FETCH_ASSOC);
+
 // schema
 $schema = generate_blog_post_schema($settings, $post, $tags);
 
@@ -75,6 +96,21 @@ require_once __DIR__ . '/includes/header.php';
       <?php echo addHeadingIds($post['content']); ?>
     </div>
   </article>
+
+  <?php if ($prevPost || $nextPost): ?>
+    <nav class="post-nav" aria-label="Post navigation">
+      <?php if ($prevPost): ?>
+        <a class="post-nav-prev" href="<?php echo htmlspecialchars($root_path . $prevPost['slug']); ?>" rel="prev" title="<?php echo htmlspecialchars(date('m.d.Y', strtotime($prevPost['created_at']))); ?>">
+          ⟵ <?php echo htmlspecialchars($prevPost['title']); ?>
+        </a>
+      <?php endif; ?>
+      <?php if ($nextPost): ?>
+        <a class="post-nav-next" href="<?php echo htmlspecialchars($root_path . $nextPost['slug']); ?>" rel="next" title="<?php echo htmlspecialchars(date('m.d.Y', strtotime($nextPost['created_at']))); ?>">
+          <?php echo htmlspecialchars($nextPost['title']); ?> ⟶
+        </a>
+      <?php endif; ?>
+    </nav>
+  <?php endif; ?>
 
   <!-- Convert standalone tweet URLs to embedded tweets -->
   <script>

@@ -118,6 +118,7 @@ header nav a {text-decoration: none;color: var(--text);}
   overflow-wrap: anywhere;
 }
 .post-content .twitter-tweet {margin: 0 auto;}
+.post-nav { display: flex; justify-content: space-between; gap: 16px; margin: 32px 0; }
 .author-bio {margin-top: 40px;padding-top: 20px;border-top: 1px solid #eee;}
 .author-bio a {display: inline;}
 .author-bio b {display: block;margin-bottom: 10px;}
