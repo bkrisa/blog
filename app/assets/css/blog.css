@@ -125,8 +125,8 @@ header nav a {text-decoration: none;color: var(--text);}
   gap: 1rem;
   list-style-type: none;
 }
-.related-posts li, .related-posts a {display: flex;flex-direction: column;}
-.related-posts img {max-width: 220px;object-fit: cover;border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);}
+.related-posts li, .related-posts a {display: flex;flex-direction: column;max-width:220px;}
+.related-posts img {object-fit: cover;border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);}
 .related-posts time {font-size: 14px;font-style: italic;}
 .post-nav { display: flex; justify-content: space-between; gap: 16px; margin: 32px 0; }
 .author-bio {margin-top: 40px;padding-top: 20px;border-top: 1px solid #eee;}
