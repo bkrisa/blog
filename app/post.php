@@ -34,6 +34,22 @@ $tagStmt = $db->prepare("
 $tagStmt->execute([$post['id']]);
 $tags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Related posts: shared tags, rarer tags count more
+$relatedStmt = $db->prepare("
+  SELECT p.title, p.slug, p.content, p.created_at, SUM(1.0 / tc.cnt) AS score
+  FROM post_tags pt
+  JOIN posts p ON p.id = pt.post_id
+  JOIN (SELECT tag_id, COUNT(*) AS cnt FROM post_tags GROUP BY tag_id) tc ON tc.tag_id = pt.tag_id
+  WHERE pt.tag_id IN (SELECT tag_id FROM post_tags WHERE post_id = ?)
+    AND p.id != ?
+    AND p.status = 'published'
+  GROUP BY p.id
+  ORDER BY score DESC, p.created_at DESC
+  LIMIT 3
+");
+$relatedStmt->execute([$post['id'], $post['id']]);
+$relatedPosts = $relatedStmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Previous (older) and next (newer) published posts
 $prevStmt = $db->prepare("
   SELECT title, slug, created_at FROM posts
@@ -96,6 +112,28 @@ require_once __DIR__ . '/includes/header.php';
       <?php echo addHeadingIds($post['content']); ?>
     </div>
   </article>
+
+  <?php if (!empty($relatedPosts)): ?>
+    <section class="related-posts">
+      <h3>Related posts</h3>
+      <ul>
+        <?php foreach ($relatedPosts as $rel): ?>
+          <?php $thumbnail = getFirstImage($rel['content']); ?>
+          <li>
+            <a href="<?php echo htmlspecialchars($root_path . $rel['slug']); ?>">
+              <?php if ($thumbnail): ?>
+                <img src="<?php echo htmlspecialchars($thumbnail); ?>" alt="<?php echo htmlspecialchars($rel['title']); ?>">
+              <?php endif; ?>
+              <?php echo htmlspecialchars($rel['title']); ?>
+            </a>
+            <time datetime="<?php echo htmlspecialchars($rel['created_at']); ?>">
+              <?php echo htmlspecialchars(date('F d, Y', strtotime($rel['created_at']))); ?>
+            </time>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
 
   <?php if ($prevPost || $nextPost): ?>
     <nav class="post-nav" aria-label="Post navigation">
