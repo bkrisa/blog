@@ -134,6 +134,7 @@ header nav a {text-decoration: none;color: var(--text);}
 }
 .share a:hover, .share button:hover {text-decoration: none; color: var(--main); border-color: var(--main);}
 .share svg {width: 1.2em; height: 1.1em; flex: none;}
+.share [hidden] {display: none;}
 .related-posts ul {
   display: flex;
   justify-content: space-between;

@@ -107,3 +107,13 @@ function addHeadingIds(string $html): string {
   }
   return $result;
 }
+
+/**
+ * Estimated reading time in minutes (minimum 1).
+ * Counts words in the visible text, so HTML tags and attributes are ignored.
+ */
+function readingTime(string $html, int $wpm = 200): int {
+  $text = html_entity_decode(preg_replace('/<[^>]+>/', ' ', $html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  $words = preg_match_all('/[\p{L}\p{N}]+(?:[\'’-][\p{L}\p{N}]+)*/u', $text);
+  return max(1, (int)ceil($words / $wpm));
+}

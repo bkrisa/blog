@@ -111,6 +111,7 @@ require_once __DIR__ . '/includes/header.php';
         <time datetime="<?php echo htmlspecialchars($post['created_at']); ?>">
           <?php echo htmlspecialchars(date('F d, Y', strtotime($post['created_at']))); ?>
         </time>
+        - <?php echo readingTime($post['content']); ?> min read
 
         <?php if (!empty($tags)): ?>
           -
