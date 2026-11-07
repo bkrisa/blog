@@ -118,6 +118,22 @@ header nav a {text-decoration: none;color: var(--text);}
   overflow-wrap: anywhere;
 }
 .post-content .twitter-tweet {margin: 0 auto;}
+.share {display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 24px 0; font-size: 14px;}
+.share a, .share button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font: inherit;
+  background: none;
+  cursor: pointer;
+  color: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 4px;
+  padding: 4px 11px 3px 9px;
+}
+.share a:hover, .share button:hover {text-decoration: none; color: var(--main); border-color: var(--main);}
+.share svg {width: 1.2em; height: 1.1em; flex: none;}
 .related-posts ul {
   display: flex;
   justify-content: space-between;

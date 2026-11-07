@@ -4,6 +4,7 @@ require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/settings.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/schema.php';
+$shareIcons = require __DIR__ . '/includes/share_icons.php';
 
 $settings = loadSettings();
 $db = new Database();
@@ -84,6 +85,20 @@ $page_title = $post['title'];
 $page_description = $post['excerpt'] ?? '';
 $page_url = rtrim($settings['site']['blog_url'], '/') . '/' . $post['slug'];
 
+// Share links
+$shareUrl   = rawurlencode($page_url);
+$shareTitle = rawurlencode($post['title']);
+$xVia       = !empty($settings['site']['twitter_handle'])
+  ? '&via=' . rawurlencode($settings['site']['twitter_handle'])
+  : '';
+
+$shareLinks = [
+  'Facebook'    => "https://www.facebook.com/sharer/sharer.php?u={$shareUrl}",
+  'X'           => "https://x.com/intent/post?url={$shareUrl}&text={$shareTitle}{$xVia}",
+  'LinkedIn'    => "https://www.linkedin.com/sharing/share-offsite/?url={$shareUrl}",
+  'Email'       => "mailto:?subject={$shareTitle}&body={$shareUrl}",
+];
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 
@@ -112,6 +127,45 @@ require_once __DIR__ . '/includes/header.php';
       <?php echo addHeadingIds($post['content']); ?>
     </div>
   </article>
+
+  <div class="share">
+    <b>Share:</b>
+    <?php foreach ($shareLinks as $name => $href): ?>
+      <a href="<?php echo htmlspecialchars($href); ?>" target="_blank" rel="noopener noreferrer">
+        <?php echo $shareIcons[$name]; ?><span><?php echo htmlspecialchars($name); ?></span>
+      </a>
+    <?php endforeach; ?>
+    <button type="button" class="share-copy" data-url="<?php echo htmlspecialchars($page_url); ?>">
+      <?php echo $shareIcons['Copy link']; ?><span>Copy link</span>
+    </button>
+    <button type="button" class="share-native" data-title="<?php echo htmlspecialchars($post['title']); ?>" data-url="<?php echo htmlspecialchars($page_url); ?>" hidden>
+      <?php echo $shareIcons['Share']; ?><span>Share</span>
+    </button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let copy = document.querySelector('.share-copy');
+      let native = document.querySelector('.share-native');
+
+      copy.addEventListener('click', function () {
+        navigator.clipboard.writeText(copy.dataset.url).then(function () {
+          var label = copy.querySelector('span');
+          var old = label.textContent;
+          label.textContent = 'Copied ✓';
+          setTimeout(function () { label.textContent = old; }, 1500);
+        });
+      });
+
+      // Native share sheet on phones and some desktops
+      if (navigator.share) {
+        native.hidden = false;
+        native.addEventListener('click', function () {
+          navigator.share({ title: native.dataset.title, url: native.dataset.url }).catch(function () {});
+        });
+      }
+    });
+  </script>
 
   <?php if (!empty($relatedPosts)): ?>
     <section class="related-posts">
