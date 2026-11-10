@@ -88,6 +88,43 @@ header nav a {text-decoration: none;color: var(--text);}
 .post-list time {margin: 0;font-size: 14px;}
 .post-list h2 {margin: 0 ;}
 
+/* search */
+.nav label[for="search-q"] {cursor: pointer;}
+.nav label[for="search-q"]:hover {text-decoration: underline;}
+.search-drop {
+  display: flex;
+  gap: 8px;
+  max-height: 0;
+  margin-bottom: 0;
+  padding: 0 2px;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .2s ease, margin-bottom .2s ease, opacity .2s ease;
+}
+.search-drop:focus-within,
+.search-drop.is-open,
+.search-drop:has(input:not(:placeholder-shown)) { max-height: 60px; margin-bottom: 24px; opacity: 1; }
+.search-drop input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  padding: 6px 10px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  outline: none;
+}
+.search-drop button {
+  font: inherit;
+  color: #fff;
+  background: var(--main);
+  border: 1px solid var(--main);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inherit; border-radius: 2px; padding: 0 1px;}
+
 /* post */
 .post-header {margin-bottom: 20px;}
 .post-header h1 {margin-bottom: 4px;line-height: 1.1em;}
@@ -235,8 +272,8 @@ footer ul {
     gap: 0;
     padding: 8px 0 12px;
   }
-  header nav a {display: block;padding: 10px 0;}
-  .nav-toggle:checked ~ nav {max-height: 280px;}
+  header nav a, header nav label {display: block;padding: 10px 0;}
+  .nav-toggle:checked ~ nav {max-height: max-content;}
   .nav-toggle:checked + .hamburger span:nth-child(1) {transform: translateY(6px) rotate(45deg);}
   .nav-toggle:checked + .hamburger span:nth-child(2) {opacity: 0;}
   .nav-toggle:checked + .hamburger span:nth-child(3) {transform: translateY(-8px) rotate(-45deg);}

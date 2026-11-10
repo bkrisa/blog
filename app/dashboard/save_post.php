@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/same_origin.php';
+require_once __DIR__ . '/../includes/search.php';
 require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
 requireSameOrigin();
@@ -120,6 +121,8 @@ try {
   $db->rollBack();
   die('An error occurred while saving: ' . htmlspecialchars($e->getMessage()));
 }
+
+try { searchIndexPost($db, (int)$postId); } catch (Throwable $e) { error_log('Search index failed: ' . $e->getMessage()); }
 
 header('Location: editor.php?id=' . $postId . '&saved=1');
 exit;

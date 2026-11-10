@@ -137,6 +137,9 @@ if (!defined('SECURE_ACCESS')) {
               </a>
             </li>
           <?php endforeach; ?>
+          <li>
+            <label for="search-q">search</label>
+          </li>
         </ul>
       </nav>
     <?php else: ?>
@@ -153,3 +156,9 @@ if (!defined('SECURE_ACCESS')) {
     <?php endif; ?>
   </header>
   <main>
+  <?php if (!$is_dashboard_page): ?>
+    <form class="search-drop<?php echo !empty($search_open) ? ' is-open' : ''; ?>" action="<?php echo htmlspecialchars($root_path . 'search.php'); ?>" method="get" role="search">
+      <input type="search" id="search-q" name="q" value="<?php echo htmlspecialchars($search_query ?? ''); ?>" placeholder="Search posts…" maxlength="100" aria-label="Search posts">
+      <button type="submit">Search</button>
+    </form>
+  <?php endif; ?>
