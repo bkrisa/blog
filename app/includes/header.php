@@ -121,6 +121,7 @@ if (!defined('SECURE_ACCESS')) {
     </a>
 
     <?php if (!$is_dashboard_page): ?>
+      <label for="search-q" class="search-mobile">search</label>
       <input type="checkbox" id="nav-toggle" class="nav-toggle">
       <label for="nav-toggle" class="hamburger" aria-label="Menu">
         <span></span>
@@ -137,7 +138,7 @@ if (!defined('SECURE_ACCESS')) {
               </a>
             </li>
           <?php endforeach; ?>
-          <li>
+          <li class="search-item">
             <label for="search-q">search</label>
           </li>
         </ul>
