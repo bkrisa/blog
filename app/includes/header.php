@@ -158,7 +158,7 @@ if (!defined('SECURE_ACCESS')) {
   </header>
   <main>
   <?php if (!$is_dashboard_page): ?>
-    <form class="search-drop<?php echo !empty($search_open) ? ' is-open' : ''; ?>" action="<?php echo htmlspecialchars($root_path . 'search.php'); ?>" method="get" role="search">
+    <form class="search-drop<?php echo !empty($search_open) ? ' is-open' : ''; ?>" action="<?php echo htmlspecialchars($root_path . 'search'); ?>" method="get" role="search">
       <input type="search" id="search-q" name="q" value="<?php echo htmlspecialchars($search_query ?? ''); ?>" placeholder="Search posts…" maxlength="100" aria-label="Search posts">
       <button type="submit">Search</button>
     </form>

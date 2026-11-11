@@ -55,6 +55,7 @@ if ($postId) {
 
   $isEdit = true;
 }
+$reserved = ['search', 'tag', 'rss', 'dashboard', 'includes', 'assets', 'llms'];
 $slug = $baseSlug;
 $counter = 2;
 $checkStmt = $isEdit
@@ -64,7 +65,7 @@ $checkStmt = $isEdit
 while (true) {
   $params = $isEdit ? [$slug, $postId] : [$slug];
   $checkStmt->execute($params);
-  if ($checkStmt->fetchColumn() == 0) {
+  if ($checkStmt->fetchColumn() == 0 && !in_array($slug, $reserved, true)) {
     break;
   }
   $slug = $baseSlug . '-' . $counter;
