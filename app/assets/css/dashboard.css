@@ -1,5 +1,7 @@
 /* dashboard */
 .dashboard {padding: 1rem 0;}
+.dashboard-toolbar {display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px;}
+.dashboard-toolbar input[type=search] {font: inherit; padding: 5px 10px; border: 1px solid #ddd; border-radius: 10px;}
 .dashboard table {width: 100%;font-size: 14px;border-collapse: collapse}
 .dashboard thead {
   border: 1px solid #eee;

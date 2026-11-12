@@ -103,7 +103,7 @@ header nav a {text-decoration: none;color: var(--text);}
 }
 .search-drop:focus-within,
 .search-drop.is-open,
-.search-drop:has(input:not(:placeholder-shown)) { max-height: 60px; opacity: 1; }
+.search-drop:has(input:not(:placeholder-shown)) {max-height: 60px; opacity: 1;}
 .search-drop input {
   flex: 1;
   min-width: 0;
@@ -127,9 +127,9 @@ header nav a {text-decoration: none;color: var(--text);}
 mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inherit; border-radius: 2px; padding: 0 1px;}
 
 /* post */
-.post-header {margin-bottom: 20px;}
+.post-header {margin-bottom: 12px;}
 .post-header h1 {margin-bottom: 4px;margin-top: 10px;line-height: 1.1em;}
-.post-meta {font-size: 14px; margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 8px;}
+.post-meta {font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px;}
 .post-tags {display: flex;flex-wrap: wrap;gap: 8px;}
 .post-tags a {text-decoration: underline;}
 .post-tags a:hover {text-decoration: none;}

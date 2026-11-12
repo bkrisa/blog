@@ -1,6 +1,6 @@
 <?php
 /**
- * Full-text search for OpenBlog, built on SQLite FTS5.
+ * Full-text search for OpenBlog, built on SQLite FTS5
  */
 
 function searchEnsureTable($db): void {
@@ -20,12 +20,12 @@ function searchPlainText(string $html): string {
   return trim(preg_replace('/\s+/u', ' ', $text));
 }
 
-// Add, update or (for drafts) remove one post in the index
+// Add or update one post in the index (drafts included)
 function searchIndexPost($db, int $postId): void {
   searchEnsureTable($db);
   $db->prepare("DELETE FROM posts_fts WHERE rowid = ?")->execute([$postId]);
 
-  $stmt = $db->prepare("SELECT title, content FROM posts WHERE id = ? AND status = 'published'");
+  $stmt = $db->prepare("SELECT title, content FROM posts WHERE id = ?");
   $stmt->execute([$postId]);
   $post = $stmt->fetch(PDO::FETCH_ASSOC);
   if (!$post) {
@@ -53,10 +53,25 @@ function searchRemovePost($db, int $postId): void {
 function searchRebuild($db): void {
   searchEnsureTable($db);
   $db->prepare("DELETE FROM posts_fts")->execute();
-  $ids = $db->prepare("SELECT id FROM posts WHERE status = 'published'");
+  $ids = $db->prepare("SELECT id FROM posts");
   $ids->execute();
   foreach ($ids->fetchAll(PDO::FETCH_COLUMN) as $id) {
     searchIndexPost($db, (int)$id);
+  }
+}
+
+/**
+ * Self-healing: if the index does not hold exactly one row per post
+ * (first use, or after an older version that skipped drafts), rebuild it
+ */
+function searchEnsureIndex($db): void {
+  searchEnsureTable($db);
+  $indexed = $db->prepare("SELECT COUNT(*) FROM posts_fts");
+  $indexed->execute();
+  $total = $db->prepare("SELECT COUNT(*) FROM posts");
+  $total->execute();
+  if ((int)$indexed->fetchColumn() !== (int)$total->fetchColumn()) {
+    searchRebuild($db);
   }
 }
 
@@ -93,16 +108,7 @@ function searchPosts($db, string $input, int $limit = 20): array {
 
   searchEnsureTable($db);
 
-  // Self-healing: build the index on first use (or after it was emptied).
-  $countIndexed = $db->prepare("SELECT COUNT(*) FROM posts_fts");
-  $countIndexed->execute();
-  if ((int)$countIndexed->fetchColumn() === 0) {
-    $countPublished = $db->prepare("SELECT COUNT(*) FROM posts WHERE status = 'published'");
-    $countPublished->execute();
-    if ((int)$countPublished->fetchColumn() > 0) {
-      searchRebuild($db);
-    }
-  }
+  searchEnsureIndex($db);
 
   $stmt = $db->prepare("
     SELECT

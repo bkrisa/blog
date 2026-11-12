@@ -6,21 +6,46 @@ verifyTailscaleAccess();
 
 $db = new Database();
 
+require_once __DIR__ . '/../includes/search.php';
+
+// Optional filter (?q=...), same index as the public search (drafts included)
+$q = trim((string)($_GET['q'] ?? ''));
+$where = '';
+$params = [];
+$searchFailed = false;
+if ($q !== '') {
+  $ftsQuery = searchBuildQuery($q);
+  if ($ftsQuery === null) {
+    $where = 'WHERE 0';
+  } else {
+    try {
+      searchEnsureIndex($db);
+      $where = 'WHERE p.id IN (SELECT rowid FROM posts_fts WHERE posts_fts MATCH ?)';
+      $params[] = $ftsQuery;
+    } catch (Throwable $e) {
+      error_log('Dashboard search failed: ' . $e->getMessage());
+      $searchFailed = true;
+    }
+  }
+}
+
 $stmt = $db->prepare("
   SELECT
     p.id,
     p.title,
     p.slug,
     p.status,
+    p.created_at,
     p.updated_at,
     GROUP_CONCAT(t.title, ', ') AS tags
   FROM posts p
   LEFT JOIN post_tags pt ON pt.post_id = p.id
   LEFT JOIN tags t ON t.id = pt.tag_id
+  $where
   GROUP BY p.id
-  ORDER BY p.updated_at DESC
+  ORDER BY (p.status = 'draft') DESC, p.created_at DESC, p.id DESC
 ");
-$stmt->execute();
+$stmt->execute($params);
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $page_title = "Dashboard";
@@ -34,7 +59,19 @@ require_once __DIR__ . '/../includes/header.php';
     <p class="save-notice">Post deleted.</p>
   <?php endif; ?>
 
-  <a href="editor.php" style="margin-bottom: 10px;">+ New post</a>
+  <div class="dashboard-toolbar">
+    <a href="editor.php">+ New post</a>
+    <form action="./" method="get" role="search">
+      <input type="search" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Search posts…" maxlength="100" aria-label="Search posts">
+      <?php if ($q !== ''): ?><a href="./">Clear</a><?php endif; ?>
+    </form>
+  </div>
+
+  <?php if ($searchFailed): ?>
+    <p>Search is unavailable, showing all posts.</p>
+  <?php elseif ($q !== ''): ?>
+    <p><?php echo count($posts); ?> post<?php echo count($posts) === 1 ? '' : 's'; ?> found for “<?php echo htmlspecialchars($q); ?>”.</p>
+  <?php endif; ?>
 
   <table class="posts-table">
     <thead>
@@ -49,7 +86,7 @@ require_once __DIR__ . '/../includes/header.php';
     <tbody>
       <?php if (empty($posts)): ?>
         <tr>
-          <td colspan="5">There are no posts yet.</td>
+          <td colspan="5"><?php echo $q !== '' ? 'No posts match your search.' : 'There are no posts yet.'; ?></td>
         </tr>
       <?php endif; ?>
 
