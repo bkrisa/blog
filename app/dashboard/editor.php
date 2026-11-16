@@ -95,6 +95,7 @@ require_once __DIR__ . '/../includes/header.php';
       relative_urls: false,
       remove_script_host: false,
       convert_urls: true,
+      entity_encoding: 'raw',
 
       // Image upload
       images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
