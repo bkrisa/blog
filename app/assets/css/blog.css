@@ -147,6 +147,7 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
   margin: 10px auto;
   border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
 }
+.post-content .img-link {display: block; cursor: zoom-in;}
 .post-content hr {margin: 20px 0;color: var(--text);}
 .post-content code {
   padding: 2px 4px;

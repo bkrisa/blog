@@ -117,3 +117,26 @@ function readingTime(string $html, int $wpm = 200): int {
   $words = preg_match_all('/[\p{L}\p{N}]+(?:[\'’-][\p{L}\p{N}]+)*/u', $text);
   return max(1, (int)ceil($words / $wpm));
 }
+
+// Wrap every post image in a link to the image itself (opens in a new tab)
+function linkPostImages(string $html): string {
+  $result = preg_replace_callback(
+    '#(<a\b[^>]*>.*?</a>)|(<img\b[^>]*>)#is',
+    function ($m) {
+      if (!empty($m[1])) {
+        return $m[1];
+      }
+      $img = $m[2];
+      if (!preg_match('/\ssrc\s*=\s*(["\'])(.*?)\1/is', $img, $src)) {
+        return $img;
+      }
+      $url = trim(html_entity_decode($src[2], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+      if (!preg_match('#^(https?:)?//|^/#i', $url)) {
+        return $img;
+      }
+      return '<a class="img-link" href="' . htmlspecialchars($url, ENT_QUOTES) . '" target="_blank" rel="noopener">' . $img . '</a>';
+    },
+    $html
+  );
+  return $result ?? $html;
+}
