@@ -156,6 +156,11 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
   background: color-mix(in srgb, var(--text) 8%, transparent);
   overflow-wrap: anywhere;
 }
+.table-scroll {overflow-x: auto; margin-bottom: 1rem;}
+.post-content table {width: 100% !important; border-collapse: collapse; min-width: 680px;}
+.post-content th, .post-content td {border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); padding: 6px 10px; text-align: left;}
+.post-content pre {overflow-x: auto; padding: 12px 14px; border-radius: 8px; margin-bottom: 1rem;}
+.post-content pre code {border: 0; padding: 0; background: none;}
 .post-content .twitter-tweet {margin: 0 auto;}
 .share {
   display: flex;

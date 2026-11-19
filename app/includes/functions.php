@@ -140,3 +140,12 @@ function linkPostImages(string $html): string {
   );
   return $result ?? $html;
 }
+
+// Wrap every table in a scrollable container so wide tables don't break the mobile layout
+function wrapTables(string $html): string {
+  return preg_replace(
+    '#<table\b.*?</table>#is',
+    '<div class="table-scroll">$0</div>',
+    $html
+  );
+}

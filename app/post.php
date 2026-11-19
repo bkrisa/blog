@@ -125,7 +125,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <div class="post-content">
-      <?php echo linkPostImages(addHeadingIds($post['content'])); ?>
+      <?php echo wrapTables(linkPostImages(addHeadingIds($post['content']))); ?>
     </div>
   </article>
 

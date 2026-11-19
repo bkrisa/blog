@@ -24,23 +24,88 @@
 .posts-table>tbody>:nth-child(odd){background: color-mix(in srgb, var(--main) 8%, transparent);}
 
 /* editor */
-.editor input {
-  border: 2px solid #eee;
+.editor [hidden] {display: none !important;}
+.editor {padding-bottom: 90px;}
+html {scroll-padding-bottom: 110px;}
+.post-title {
+  border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
   border-radius: 10px;
   width: 100%;
   margin-bottom: 10px;
+  font-size: 18px;
+  padding: 10px;
 }
-.editor input:focus-visible {outline: auto;color: var(--heading);}
-.post-title {font-size: 18px;padding: 10px;}
-.post-slug {font-size: 14px;padding: 6px;}
-.post-tags {font-size: 14px;padding: 8px;margin-top: 10px;}
-button[value=published], button[value=draft] {
-  font-size: 16px;
-  background: transparent;
-  padding: 6px 8px;
-  margin-top: 16px;
-  border: 1px solid var(--main);
-  border-radius: 8px;
-  cursor: pointer;
+.editor .tox-tinymce {border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);}
+
+/* bottom bar */
+.mde-bar {position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--bg); border-top: 1px solid color-mix(in srgb, var(--text) 30%, transparent);}
+.mde-bar-inner {
+  max-width: 780px; margin: 0 auto; padding: 10px 1rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
-button[value=published] {background: var(--main);}
+.mde-bar-left, .mde-bar-right {display: flex; align-items: center; gap: 4px;}
+.mde-bar-right {gap: 10px;}
+.mde-icon {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0; border: 0; border-radius: 8px; background: transparent;
+  color: var(--text); cursor: pointer;
+}
+.mde-icon svg {width: 20px; height: 20px;}
+.mde-icon:hover, .mde-icon[aria-expanded="true"], .mde-icon[aria-pressed="true"] {color: var(--main); background: color-mix(in srgb, var(--main) 10%, transparent);}
+.mde-badge {
+  position: absolute; top: 1px; right: 0; min-width: 16px; padding: 0 4px; border-radius: 999px;
+  background: var(--main); color: #fff; font-size: 11px; line-height: 16px; text-align: center;
+}
+
+.mde-pop-wrap {position: relative;}
+.mde-pop {
+  position: absolute; bottom: calc(100% + 12px); left: 0; z-index: 40; width: min(340px, 86vw);
+  padding: 12px; background: var(--bg); border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .12); font-size: 14px; line-height: 1.5;
+}
+.mde-pop label {display: block; font-size: 13px; margin-bottom: 4px;}
+.mde-pop input[type=text] {
+  width: 100%; font: inherit; color: var(--text); padding: 5px 8px; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 8px; outline: none;
+}
+.mde-pop input[type=text]:focus {border-color: var(--main);}
+.mde-hint {margin: 6px 0 0; font-size: 12px; opacity: .75; line-height: 1.4;}
+.mde-hint.warn {color: #a66a00; opacity: 1;}
+.mde-url {display: flex; align-items: center; gap: 2px; flex-wrap: wrap;}
+.mde-url span {font-size: 12px; opacity: .75; word-break: break-all;}
+.mde-url input {flex: 1; min-width: 120px;}
+.mde-chips {display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0;}
+.mde-chips:empty {display: none;}
+.mde-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 0 9px; border-radius: 999px; font: inherit; font-size: 13px;
+  line-height: 24px; color: var(--text); background: transparent; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--text) 35%, transparent);
+}
+.mde-chip:hover {border-color: var(--main); color: var(--main);}
+.mde-chip.on {border-color: var(--main); color: var(--main); background: color-mix(in srgb, var(--main) 12%, transparent);}
+.mde-sub {margin: 12px 0 0; font-size: 12px; opacity: .7;}
+
+/* split publish button */
+.mde-split {position: relative; display: flex;}
+.mde-publish, .mde-split-toggle {
+  font: inherit; font-size: 15px; color: #fff; background: var(--main); border: 1px solid var(--main); cursor: pointer;
+}
+.mde-publish {padding: 6px 14px; border-radius: 8px 0 0 8px;}
+.mde-split-toggle {
+  display: inline-flex; align-items: center; padding: 0 8px; border-radius: 0 8px 8px 0;
+  border-left-color: rgba(255, 255, 255, .45);
+}
+.mde-split-toggle svg {width: 14px; height: 14px;}
+.mde-publish:hover, .mde-split-toggle:hover {filter: brightness(.94);}
+.mde-menu {
+  position: absolute; right: 0; bottom: calc(100% + 12px); z-index: 40; min-width: 100%; white-space: nowrap;
+  background: var(--bg); border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .12); padding: 4px;
+}
+.mde-menu button {
+  display: block; width: 100%; text-align: left; font: inherit; font-size: 14px; color: var(--text);
+  background: transparent; border: 0; border-radius: 6px; padding: 8px 12px; cursor: pointer;
+}
+.mde-menu button:hover {background: color-mix(in srgb, var(--main) 10%, transparent); color: var(--main);}
+
+@media (max-width: 600px) {
+  .mde-pop {width: min(340px, calc(100vw - 2rem));}
+}
