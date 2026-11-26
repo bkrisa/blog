@@ -280,10 +280,10 @@ function newsletterBuildMessage(array $post, array $subscriber): array {
   $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>'
     . '<body style="margin:0;padding:24px 16px;background:#ffffff;">'
     . '<div style="max-width:640px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;font-size:17px;line-height:1.6;color:#222222;">';
+  $html .= '<a href="' . nl_h($postUrl) . '" style="display:block;color:#777777;text-align:right;padding:0 0 24px;font-size:12px;line-height:1;">Read online</a>';
   if (trim($n['intro']) !== '') {
     $html .= nlParagraphsHtml($n['intro']);
   }
-  $html .= '<a href="' . nl_h($postUrl) . '" style="color:#777777;text-align:right;padding:0 0 24;font-size:12px;line-height:1;">Read online</a>' .
   $html .= '<h1 style="margin:0 0 20px;font-size:22px;line-height:1.25;">' . $titleH . '</h1>';
   $html .= $body['html'];
   if (trim($n['outro']) !== '') {
