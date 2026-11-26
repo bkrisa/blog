@@ -84,10 +84,8 @@ if ($confirmButton) {
 } else {
   [$heading, $text] = $messages[$resultKey];
   $body = '<p>' . nl_h($text) . '</p>';
-  if ($resultKey === 'invalid') {
-    http_response_code(400);
-  }
 }
+http_response_code($resultKey === 'invalid' && !$confirmButton ? 400 : 200);
 
 $page_title = $heading;
 $page_description = '';
