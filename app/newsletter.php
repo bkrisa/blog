@@ -12,6 +12,7 @@ register_shutdown_function(function () use ($__dbg) {
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/settings.php';
+require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/newsletter.php';
 
 $root_path = getRootPath();
