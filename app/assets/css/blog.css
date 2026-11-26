@@ -242,6 +242,7 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
 }
 .subscribe-note {margin: 6px 0 0; font-size: 13px; opacity: .7;}
 .newsletter-result {padding: 2rem 0;}
+.subscribe-message {margin: 2rem 0;}
 
 /* tags */
 .tag-list {

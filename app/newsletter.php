@@ -34,6 +34,20 @@ try {
     $result = trim((string)($_POST['website'] ?? '')) !== ''
       ? 'check'
       : newsletterSubscribe($db, (string)($_POST['email'] ?? ''));
+    // the form on the page sends the request with fetch(): answer with a short message, no redirect
+    if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+      $inline = [
+        'check'     => 'Thank you! Check your inbox and click the button in the email to confirm.',
+        'invalid'   => 'Please enter a valid email address.',
+        'ratelimit' => 'Too many tries. Please try again a little later.',
+        'error'     => 'Could not send the email. Please try again a little later.',
+        'disabled'  => 'The newsletter is not available right now.',
+      ];
+      header('Content-Type: application/json');
+      header('Cache-Control: no-store');
+      echo json_encode(['ok' => $result === 'check', 'message' => $inline[$result] ?? $inline['error']]);
+      exit;
+    }
     header('Location: ' . $root_path . 'newsletter?done=' . $result, true, 303);
     exit;
   }
