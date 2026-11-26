@@ -280,7 +280,7 @@ function newsletterBuildMessage(array $post, array $subscriber): array {
   $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>'
     . '<body style="margin:0;padding:24px 16px;background:#ffffff;">'
     . '<div style="max-width:640px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;font-size:17px;line-height:1.6;color:#222222;">';
-  $html .= '<a href="' . nl_h($postUrl) . '" style="display:block;color:#777777;text-align:right;padding:0 0 24px;font-size:12px;line-height:1;">Read online</a>';
+  $html .= '<a href="' . nl_h($postUrl) . '" style="display:block;color:#777777;text-align:right;padding:0 0 24px;font-size:12px;line-height:1;text-decoration:none;">Read online</a>';
   if (trim($n['intro']) !== '') {
     $html .= nlParagraphsHtml($n['intro']);
   }
@@ -291,7 +291,7 @@ function newsletterBuildMessage(array $post, array $subscriber): array {
   }
   $html .= '<hr style="border:0;border-top:1px solid #dddddd;margin:32px 0 14px;">'
     . '<p style="margin:0;font-size:13px;line-height:1.5;color:#777777;">You get this email because you subscribed to ' . nl_h($site) . '. '
-    . '<a href="' . nl_h($unsubscribe) . '">Unsubscribe</a></p>'
+    . '<a href="' . nl_h($unsubscribe) . '" style="color:#7777777;">Unsubscribe</a></p>'
     . '</div></body></html>';
 
   $text = '';
