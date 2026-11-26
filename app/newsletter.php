@@ -14,7 +14,7 @@ $token = (string)($_GET['token'] ?? $_POST['token'] ?? '');
 // Messages shown on the result page (fixed list: nothing from the URL is printed)
 $messages = [
   'check'        => ['Check your inbox', 'We sent you an email. Click the button in it to confirm your subscription.'],
-  'confirmed'    => ['You are subscribed', 'Thank you! New posts will arrive in your inbox.'],
+  'confirmed'    => ['You’re on the list.', 'Also, so you know, not every post is sent to the mailing list. Every post hits the web, but the author decides which posts are emailed.'],
   'unsubscribed' => ['You are unsubscribed', 'You will not get any more emails from us.'],
   'expired'      => ['This link has expired', 'Please subscribe again to get a new confirmation email.'],
   'invalid'      => ['Something is not right', 'That email address or link is not valid.'],
@@ -24,7 +24,6 @@ $messages = [
 ];
 
 $resultKey = 'invalid';
-$confirmButton = false;
 
 try {
   $db = new Database();
@@ -56,14 +55,9 @@ try {
   if ($method === 'GET' && isset($_GET['done'])) {
     $key = (string)$_GET['done'];
     $resultKey = isset($messages[$key]) ? $key : 'invalid';
-  } elseif ($action === 'confirm' && $method === 'POST') {
-    $resultKey = newsletterConfirm($db, $token);
   } elseif ($action === 'confirm') {
-    // GET only shows a button: mail scanners that open links must not confirm by themselves
-    $sub = newsletterFindByToken($db, $token);
-    if ($sub && in_array($sub['status'], ['pending', 'confirmed'], true)) {
-      $confirmButton = true;
-    }
+    // the button in the email opens this link: confirm right away, no second button
+    $resultKey = newsletterConfirm($db, $token);
   } elseif ($action === 'unsubscribe') {
     // GET (link in the email) and POST (one-click from Gmail/Yahoo) both unsubscribe right away
     $resultKey = newsletterUnsubscribe($db, $token);
@@ -74,19 +68,12 @@ try {
 } catch (Throwable $e) {
   error_log('Newsletter endpoint failed: ' . $e->getMessage());
   $resultKey = 'error';
-  $confirmButton = false;
 }
 
-if ($confirmButton) {
-  $heading = 'Confirm your subscription';
-  $body = '<form method="POST" action="' . nl_h($root_path) . 'newsletter?action=confirm">'
-        . '<input type="hidden" name="token" value="' . nl_h($token) . '">'
-        . '<button type="submit">Confirm my subscription</button></form>';
-} else {
-  [$heading, $text] = $messages[$resultKey];
-  $body = '<p>' . nl_h($text) . '</p>';
-}
-http_response_code($resultKey === 'invalid' && !$confirmButton ? 400 : 200);
+[$heading, $text] = $messages[$resultKey];
+$body = '<p>' . nl_h($text) . '</p>';
+http_response_code($resultKey === 'invalid' ? 400 : 200);
+$backLabel = $resultKey === 'confirmed' ? 'See all posts' : 'Back to the blog';
 
 $page_title = $heading;
 $page_description = '';
@@ -97,6 +84,6 @@ require __DIR__ . '/includes/header.php';
 <main class="newsletter-result">
   <h1><?php echo nl_h($heading); ?></h1>
   <?php echo $body; ?>
-  <p><a href="<?php echo nl_h($root_path); ?>">&larr; Back to the blog</a></p>
+  <p><a href="<?php echo nl_h($root_path); ?>"><?php echo nl_h($backLabel); ?> &rarr;</a></p>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
