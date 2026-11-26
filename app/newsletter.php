@@ -3,7 +3,9 @@
 $__dbg = '/srv/www/bkrisa.com/blog/data/nl-debug.log';
 @file_put_contents($__dbg, date('c') . ' START ' . ($_SERVER['REQUEST_METHOD'] ?? '') . ' ' . ($_SERVER['REQUEST_URI'] ?? '') . "\n", FILE_APPEND);
 register_shutdown_function(function () use ($__dbg) {
-  @file_put_contents($__dbg, date('c') . ' END status=' . http_response_code() . "\n", FILE_APPEND);
+  $err = error_get_last();
+  @file_put_contents($__dbg, date('c') . ' END status=' . http_response_code()
+    . ($err ? ' ERROR=' . $err['message'] . ' @ ' . $err['file'] . ':' . $err['line'] : '') . "\n", FILE_APPEND);
 });
 
 // Public newsletter endpoint: subscribe (POST), confirm and unsubscribe (link in the emails).
