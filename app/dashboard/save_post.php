@@ -119,6 +119,16 @@ try {
   }
 
   $db->commit();
+  // --- Newsletter: queue the post for the subscribers ---
+  // Only published posts, only when the box was ticked, and never a second time for the same post.
+  if ($status === 'published' && ($_POST['newsletter'] ?? '') === '1') {
+    try {
+      require_once __DIR__ . '/../includes/newsletter_email.php';
+      newsletterQueuePost($db, (int)$postId);
+    } catch (Throwable $e) {
+      error_log('Newsletter queue failed: ' . $e->getMessage()); // never block saving
+    }
+  }
 } catch (Exception $e) {
   $db->rollBack();
   die('An error occurred while saving: ' . htmlspecialchars($e->getMessage()));

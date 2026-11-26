@@ -107,5 +107,49 @@ html {scroll-padding-bottom: 110px;}
 .mde-menu button:hover {background: color-mix(in srgb, var(--main) 10%, transparent); color: var(--main);}
 
 @media (max-width: 600px) {
-  .mde-pop {width: min(340px, calc(100vw - 2rem));}
+  .mde-pop-wrap {position: static;}
+  .mde-pop {left: 1rem; right: 1rem; width: auto;}
 }
+
+/* Settings */
+.settings fieldset { border: 1px solid color-mix(in srgb, var(--text) 40%, transparent); border-radius: 6px; margin: 0 0 20px; padding: 6px 16px 16px; }
+.settings legend { font-weight: 600; padding: 0 6px; }
+.settings label { display: block; font-size: 14px; margin: 12px 0 4px; }
+.settings input[type=text], .settings textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
+  border-radius: 10px;
+}
+.settings .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.settings .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+.settings .row input, .settings .row textarea { flex: 1; min-width: 0; }
+.settings .color-field { display: flex; gap: 8px; align-items: center; }
+.settings .color-field input[type=color] { width: 40px; height: 34px; padding: 0; flex: none; }
+.settings .hint { font-size: 12px; opacity: .7; margin: 6px 0 0; }
+.settings .errors { border: 1px solid #d33; background: #fff3f3; color: #a00; border-radius: 6px; padding: 10px 16px; margin-bottom: 20px; font-size: 14px; }
+.settings .errors ul { margin: 0; padding-left: 18px; }
+.settings [data-remove], .settings [data-add] {font-size: 15px;color: var(--text);background: transparent;padding: 3px 4px;border: 1px solid var(--main);border-radius: 8px;cursor: pointer;}
+.settings [type=submit] {font-size: 16px;color: var(--text);background: var(--main);padding: 6px 10px;border: 1px solid var(--main);border-radius: 8px;cursor: pointer;}
+@media (max-width: 600px) { .settings .grid { grid-template-columns: 1fr; } }
+
+/* Newsletter page */
+.subs-tabs {display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px;}
+.subs-tabs a {padding: 4px 12px; border-radius: 999px; font-size: 14px; border: 1px solid #eee; color: var(--text); text-decoration: none;}
+.subs-tabs a.on {border-color: var(--main); color: var(--main); background: color-mix(in srgb, var(--main) 10%, transparent);}
+.subs-notice {margin: 0 0 12px; padding: 8px 12px; border-radius: 8px; font-size: 14px; border: 1px solid #3a9d5d; background: #eef8f1; color: #256b3f;}
+.dashboard .subs-table {width: 100%; font-size: 14px; border-collapse: collapse;}
+/* the posts table above turns thead/tr into separate tables; these tables need normal columns */
+.dashboard .subs-table thead {display: table-header-group; border: 0; width: auto;}
+.dashboard .subs-table tr {display: table-row; width: auto;}
+.dashboard .subs-table th {text-align: left; font-weight: 500; color: var(--heading); padding: 6px 8px; border-bottom: 1px solid #eee;}
+.dashboard .subs-table td {padding: 8px; color: var(--text); border-bottom: 1px solid #f3f3f3; vertical-align: top;}
+.subs-status {font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd;}
+.subs-confirmed {border-color: #3a9d5d; color: #256b3f;}
+.subs-pending {border-color: #d9a21b; color: #7a5a06;}
+.subs-unsubscribed, .subs-bounced {color: #888;}
+.subs-link {font: inherit; font-size: 14px; color: var(--main); background: none; border: 0; padding: 0; cursor: pointer;}
+.subs-pager {display: flex; gap: 14px; align-items: center; margin: 12px 0; font-size: 14px;}
+@media (max-width: 600px) {.subs-table {font-size: 13px;} .subs-people th:nth-child(3), .subs-people td:nth-child(3) {display: none;}}

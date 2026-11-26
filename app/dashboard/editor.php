@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/newsletter_email.php';
 require_once __DIR__ . '/../../tailscale_auth.php';
 verifyTailscaleAccess();
 
@@ -34,6 +35,24 @@ if ($postId) {
 $allTagsStmt = $db->prepare("SELECT title FROM tags ORDER BY title COLLATE NOCASE");
 $allTagsStmt->execute();
 $allTags = $allTagsStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// --- Newsletter ---
+newsletterEnsureSchema($db);
+$nl = newsletterSettings();
+
+$nlSubscribers = 0;
+$nlQueued = 0;
+if ($nl['enabled']) {
+  $stmt = $db->prepare("SELECT COUNT(*) FROM subscribers WHERE status = 'confirmed'");
+  $stmt->execute();
+  $nlSubscribers = (int)$stmt->fetchColumn();
+
+  if ($post) {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM newsletter_queue WHERE post_id = ?");
+    $stmt->execute([(int)$post['id']]);
+    $nlQueued = (int)$stmt->fetchColumn();
+  }
+}
 
 $isPublished = $post && $post['status'] === 'published';
 
@@ -113,6 +132,34 @@ $slugPrefix = function_exists('getRootPath') ? getRootPath() : '/';
               <p class="mde-hint" id="mde-slug-hint">Leave it empty to create it from the title.</p>
             </div>
           </div>
+          <?php if ($nl['enabled']): ?>
+            <div class="mde-pop-wrap">
+              <button type="button" class="mde-icon" id="btn-mail" title="Newsletter" aria-label="Newsletter" aria-haspopup="true" aria-expanded="false">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                </svg><span class="mde-badge" id="mail-badge" hidden>&#10003;</span>
+              </button>
+              <div class="mde-pop" id="pop-mail" hidden>
+                <?php if ($nlQueued > 0): ?>
+                  <p style="margin:0;">This post was already emailed to its subscribers. Editing it does not send it again.</p>
+                <?php else: ?>
+                  <label style="display:flex;gap:8px;align-items:flex-start;margin:0;">
+                    <input type="checkbox" name="newsletter" value="1" id="mde-newsletter" style="width:auto;margin:4px 0 0;">
+                    <span>Email this post to <?php echo $nlSubscribers; ?> subscriber<?php echo $nlSubscribers === 1 ? '' : 's'; ?> when I publish it</span>
+                  </label>
+                  <p class="mde-hint">Only "Publish" sends it, "Save draft" never does.<?php echo $nl['delay_minutes'] > 0 ? ' It goes out ' . (int)$nl['delay_minutes'] . ' minutes after publishing.' : ''; ?></p>
+                <?php endif; ?>
+
+                <label for="mde-test-to" style="margin-top:14px;">Send a test email to</label>
+                <div class="mde-url">
+                  <input type="text" id="mde-test-to" value="<?php echo bar_h($nl['reply_to']); ?>" placeholder="you@example.com" autocomplete="off">
+                  <button type="button" class="mde-chip" id="mde-test-send">Send</button>
+                </div>
+                <p class="mde-hint" id="mde-test-status"></p>
+              </div>
+            </div>
+          <?php endif; ?>
+
         </div>
 
         <div class="mde-bar-right">
@@ -221,114 +268,114 @@ $slugPrefix = function_exists('getRootPath') ? getRootPath() : '/';
     function markDirty() { window.mdeDirty = true; }
     title.addEventListener('input', markDirty);
 
-  /* ---------- popovers (tags, URL, save menu) ---------- */
-  var pops = [
-    { btn: $('btn-tags'), pop: $('pop-tags'), onClose: function () { commitTagInput(); } },
-    { btn: $('btn-url'), pop: $('pop-url') },
-    { btn: $('btn-more'), pop: $('menu-more') }
-  ];
-  function closePop(p) {
-    if (p.pop.hidden) { return; }
-    p.pop.hidden = true;
-    p.btn.setAttribute('aria-expanded', 'false');
-    if (p.onClose) { p.onClose(); }
-  }
-  function closeAll(except) { pops.forEach(function (p) { if (p !== except) { closePop(p); } }); }
-  pops.forEach(function (p) {
-    p.btn.addEventListener('click', function () {
-      if (!p.pop.hidden) { closePop(p); return; }
-      closeAll(p);
-      p.pop.hidden = false;
-      p.btn.setAttribute('aria-expanded', 'true');
-      var field = p.pop.querySelector('input[type=text]');
-      if (field) { field.focus(); }
-    });
-  });
-  document.addEventListener('click', function (e) {
+    /* ---------- popovers (tags, URL, save menu) ---------- */
+    var pops = [
+      { btn: $('btn-tags'), pop: $('pop-tags'), onClose: function () { commitTagInput(); } },
+      { btn: $('btn-url'), pop: $('pop-url') },
+      { btn: $('btn-more'), pop: $('menu-more') }
+    ];
+    if ($('btn-mail')) { pops.push({ btn: $('btn-mail'), pop: $('pop-mail') }); }
+    function closePop(p) {
+      if (p.pop.hidden) { return; }
+      p.pop.hidden = true;
+      p.btn.setAttribute('aria-expanded', 'false');
+      if (p.onClose) { p.onClose(); }
+    }
+    function closeAll(except) { pops.forEach(function (p) { if (p !== except) { closePop(p); } }); }
     pops.forEach(function (p) {
-      var path = e.composedPath ? e.composedPath() : [];
-      // composedPath: a clicked chip may already be re-rendered (detached) when this runs
-      if (!p.pop.hidden && path.indexOf(p.pop) === -1 && path.indexOf(p.btn) === -1) { closePop(p); }
+      p.btn.addEventListener('click', function () {
+        if (!p.pop.hidden) { closePop(p); return; }
+        closeAll(p);
+        p.pop.hidden = false;
+        p.btn.setAttribute('aria-expanded', 'true');
+        var field = p.pop.querySelector('input[type=text]');
+        if (field) { field.focus(); }
+      });
     });
-  });
-
-  /* ---------- tags ---------- */
-  var tags = data.tags.slice();
-  var allTags = data.allTags;
-  var tagInput = $('mde-tag-input'), tagsValue = $('mde-tags-value'), tagCount = $('tag-count');
-  var selectedBox = $('mde-selected'), existingBox = $('mde-existing');
-
-  function cleanTag(t) { return t.replace(/[,\n\r]+/g, ' ').replace(/\s+/g, ' ').trim(); }
-  function hasTag(t) { return tags.some(function (x) { return x.toLowerCase() === t.toLowerCase(); }); }
-  function addTag(raw) {
-    var t = cleanTag(raw);
-    if (!t || hasTag(t)) { return; }
-    var existing = allTags.filter(function (x) { return x.toLowerCase() === t.toLowerCase(); })[0];
-    tags.push(existing || t);
-    renderTags(true);
-  }
-  function removeTag(t) {
-    tags = tags.filter(function (x) { return x.toLowerCase() !== t.toLowerCase(); });
-    renderTags(true);
-  }
-  function chip(label, on, onClick, prefix) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'mde-chip' + (on ? ' on' : '');
-    b.textContent = (prefix || '') + label;
-    b.addEventListener('click', onClick);
-    return b;
-  }
-  function renderTags(changed) {
-    tagsValue.value = tags.join(', ');
-    tagCount.hidden = tags.length === 0;
-    tagCount.textContent = String(tags.length);
-
-    selectedBox.textContent = '';
-    tags.forEach(function (t) {
-      var c = chip(t, true, function () { removeTag(t); }, '');
-      c.textContent = t + ' ×';
-      c.setAttribute('aria-label', 'Remove tag ' + t);
-      selectedBox.appendChild(c);
+    document.addEventListener('click', function (e) {
+      pops.forEach(function (p) {
+        var path = e.composedPath ? e.composedPath() : [];
+        // composedPath: a clicked chip may already be re-rendered (detached) when this runs
+        if (!p.pop.hidden && path.indexOf(p.pop) === -1 && path.indexOf(p.btn) === -1) { closePop(p); }
+      });
     });
 
-    existingBox.textContent = '';
-    allTags.forEach(function (t) {
-      var on = hasTag(t);
-      var c = chip(t, on, function () { if (hasTag(t)) { removeTag(t); } else { addTag(t); } });
-      c.setAttribute('aria-pressed', on ? 'true' : 'false');
-      existingBox.appendChild(c);
+    /* ---------- tags ---------- */
+    var tags = data.tags.slice();
+    var allTags = data.allTags;
+    var tagInput = $('mde-tag-input'), tagsValue = $('mde-tags-value'), tagCount = $('tag-count');
+    var selectedBox = $('mde-selected'), existingBox = $('mde-existing');
+
+    function cleanTag(t) { return t.replace(/[,\n\r]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+    function hasTag(t) { return tags.some(function (x) { return x.toLowerCase() === t.toLowerCase(); }); }
+    function addTag(raw) {
+      var t = cleanTag(raw);
+      if (!t || hasTag(t)) { return; }
+      var existing = allTags.filter(function (x) { return x.toLowerCase() === t.toLowerCase(); })[0];
+      tags.push(existing || t);
+      renderTags(true);
+    }
+    function removeTag(t) {
+      tags = tags.filter(function (x) { return x.toLowerCase() !== t.toLowerCase(); });
+      renderTags(true);
+    }
+    function chip(label, on, onClick, prefix) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mde-chip' + (on ? ' on' : '');
+      b.textContent = (prefix || '') + label;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+    function renderTags(changed) {
+      tagsValue.value = tags.join(', ');
+      tagCount.hidden = tags.length === 0;
+      tagCount.textContent = String(tags.length);
+
+      selectedBox.textContent = '';
+      tags.forEach(function (t) {
+        var c = chip(t, true, function () { removeTag(t); }, '');
+        c.textContent = t + ' ×';
+        c.setAttribute('aria-label', 'Remove tag ' + t);
+        selectedBox.appendChild(c);
+      });
+
+      existingBox.textContent = '';
+      allTags.forEach(function (t) {
+        var on = hasTag(t);
+        var c = chip(t, on, function () { if (hasTag(t)) { removeTag(t); } else { addTag(t); } });
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+        existingBox.appendChild(c);
+      });
+      $('mde-existing-label').hidden = allTags.length === 0;
+      if (changed) { markDirty(); }
+    }
+    function commitTagInput() {
+      if (tagInput.value.trim()) { addTag(tagInput.value); }
+      tagInput.value = '';
+    }
+    tagInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commitTagInput(); }
+      else if (e.key === 'Backspace' && tagInput.value === '' && tags.length) { removeTag(tags[tags.length - 1]); }
     });
-    $('mde-existing-label').hidden = allTags.length === 0;
-    if (changed) { markDirty(); }
-  }
-  function commitTagInput() {
-    if (tagInput.value.trim()) { addTag(tagInput.value); }
-    tagInput.value = '';
-  }
-  tagInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commitTagInput(); }
-    else if (e.key === 'Backspace' && tagInput.value === '' && tags.length) { removeTag(tags[tags.length - 1]); }
-  });
-  renderTags(false);
+    renderTags(false);
 
-  /* ---------- post URL ---------- */
-  var slugInput = $('mde-slug'), slugHint = $('mde-slug-hint');
-  function slugify(s) {
-    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  }
-  function updateSlugUi() {
-    slugInput.placeholder = slugify(title.value) || 'post-url';
-    var changed = data.published && data.slug && slugInput.value.trim() !== data.slug;
-    slugHint.className = 'mde-hint' + (changed ? ' warn' : '');
-    slugHint.textContent = changed
-      ? 'This post is public. Changing its URL breaks links that already point to it.'
-      : 'Leave it empty to create it from the title.';
-  }
-  title.addEventListener('input', updateSlugUi);
-  slugInput.addEventListener('input', function () { updateSlugUi(); markDirty(); });
-  updateSlugUi();
-
+    /* ---------- post URL ---------- */
+    var slugInput = $('mde-slug'), slugHint = $('mde-slug-hint');
+    function slugify(s) {
+      return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+    function updateSlugUi() {
+      slugInput.placeholder = slugify(title.value) || 'post-url';
+      var changed = data.published && data.slug && slugInput.value.trim() !== data.slug;
+      slugHint.className = 'mde-hint' + (changed ? ' warn' : '');
+      slugHint.textContent = changed
+        ? 'This post is public. Changing its URL breaks links that already point to it.'
+        : 'Leave it empty to create it from the title.';
+    }
+    title.addEventListener('input', updateSlugUi);
+    slugInput.addEventListener('input', function () { updateSlugUi(); markDirty(); });
+    updateSlugUi();
 
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeAll(); } });
 
@@ -339,6 +386,32 @@ $slugPrefix = function_exists('getRootPath') ? getRootPath() : '/';
     window.addEventListener('beforeunload', function (e) {
       if (window.mdeDirty && !submitting) { e.preventDefault(); e.returnValue = ''; }
     });
+
+    // Newsletter
+    var mailCheck = $('mde-newsletter');
+    if (mailCheck) {
+      mailCheck.addEventListener('change', function () { $('mail-badge').hidden = !mailCheck.checked; });
+    }
+    var testBtn = $('mde-test-send');
+    if (testBtn) {
+      testBtn.addEventListener('click', async function () {
+        var status = $('mde-test-status');
+        status.textContent = 'Sending\u2026';
+        var editor = window.tinymce && tinymce.get('my-editor');
+        var fd = new FormData();
+        fd.append('to', $('mde-test-to').value);
+        fd.append('title', title.value);
+        fd.append('content', editor ? editor.getContent() : '');
+        fd.append('slug', $('mde-slug').value);
+        try {
+          var res = await fetch('newsletter_test.php', { method: 'POST', body: fd });
+          var json = await res.json();
+          status.textContent = json.ok ? 'Test email sent.' : (json.error || 'Could not send the test email.');
+        } catch (err) {
+          status.textContent = 'Could not send the test email: ' + err.message;
+        }
+      });
+    }
   })();
   </script>
 </div>

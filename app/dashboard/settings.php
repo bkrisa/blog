@@ -172,6 +172,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $candidate['navigation'] = st_rows('navigation', ['label', 'url']);
   $candidate['social_links'] = st_rows('social_links', ['platform', 'url']);
 
+  // Newsletter
+  $candidate['newsletter'] = array_merge($current['newsletter'] ?? [], [
+    'enabled'       => st_str('newsletter', 'enabled') === '1',
+    'from_name'     => st_str('newsletter', 'from_name'),
+    'reply_to'      => st_str('newsletter', 'reply_to'),
+    'form_text'     => st_str('newsletter', 'form_text'),
+    'form_button'   => st_str('newsletter', 'form_button'),
+    'form_note'     => st_str('newsletter', 'form_note'),
+    'intro'         => st_str('newsletter', 'intro'),
+    'outro'         => st_str('newsletter', 'outro'),
+    'delay_minutes' => (int)st_str('newsletter', 'delay_minutes'),
+  ]);
+
   // Validation
   $s = $candidate['site'];
   if ($s['name'] === '' || mb_strlen($s['name']) > 100) $errors[] = 'Site name is required (max 100 characters).';
@@ -205,6 +218,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!st_valid_url($item['url'])) $errors[] = "Social link $n needs a full http(s) URL.";
   }
 
+  $nl = $candidate['newsletter'];
+  if (mb_strlen($nl['from_name']) > 100 || preg_match('/[\r\n]/', $nl['from_name'])) $errors[] = 'Newsletter sender name must be one line (max 100 characters).';
+  if ($nl['reply_to'] !== '' && !filter_var($nl['reply_to'], FILTER_VALIDATE_EMAIL)) $errors[] = 'Newsletter reply-to must be a valid email address.';
+  if (mb_strlen($nl['form_text']) > 200) $errors[] = 'Newsletter form text is too long (max 200 characters).';
+  if (mb_strlen($nl['form_button']) > 30) $errors[] = 'Newsletter button text is too long (max 30 characters).';
+  if (mb_strlen($nl['form_note']) > 200) $errors[] = 'Newsletter form note is too long (max 200 characters).';
+  if (mb_strlen($nl['intro']) > 2000 || mb_strlen($nl['outro']) > 2000) $errors[] = 'Newsletter greeting texts are too long (max 2000 characters).';
+  if ($nl['delay_minutes'] < 0 || $nl['delay_minutes'] > 1440) $errors[] = 'Newsletter send delay must be between 0 and 1440 minutes.';
+
   if (!$errors) {
     $err = st_save_file($candidate, $settingsFile);
     if ($err === null) {
@@ -234,21 +256,6 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <style>
-  .settings fieldset { border: 1px solid #ddd; border-radius: 6px; margin: 0 0 20px; padding: 6px 16px 16px; }
-  .settings legend { font-weight: 600; padding: 0 6px; }
-  .settings label { display: block; font-size: 14px; margin: 12px 0 4px; }
-  .settings input[type=text], .settings textarea { width: 100%; font: inherit; color: #333; padding: 5px 8px; border: 1px solid #eee; border-radius: 10px;}
-  .settings .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-  .settings .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
-  .settings .row input, .settings .row textarea { flex: 1; min-width: 0; }
-  .settings .color-field { display: flex; gap: 8px; align-items: center; }
-  .settings .color-field input[type=color] { width: 40px; height: 34px; padding: 0; flex: none; }
-  .settings .hint { font-size: 12px; opacity: .7; margin: 6px 0 0; }
-  .settings .errors { border: 1px solid #d33; background: #fff3f3; color: #a00; border-radius: 6px; padding: 10px 16px; margin-bottom: 20px; font-size: 14px; }
-  .settings .errors ul { margin: 0; padding-left: 18px; }
-  .settings [data-remove], .settings [data-add] {font-size: 15px;color: var(--text);background: transparent;padding: 3px 4px;border: 1px solid var(--main);border-radius: 8px;cursor: pointer;}
-  .settings [type=submit] {font-size: 16px;color: var(--text);background: var(--main);padding: 6px 10px;border: 1px solid var(--main);border-radius: 8px;cursor: pointer;}
-  @media (max-width: 600px) { .settings .grid { grid-template-columns: 1fr; } }
 </style>
 
 <div class="editor settings">
@@ -352,6 +359,57 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
       <template><?php st_head_row('__i__', ''); ?></template>
       <button type="button" data-add>+ Add snippet</button>
+    </fieldset>
+
+    <?php
+      $nlData = is_array($data['newsletter'] ?? null) ? $data['newsletter'] : [];
+      $nlv = fn(string $k, string $default = '') => array_key_exists($k, $nlData) ? (string)$nlData[$k] : $default;
+      $nlEnabled = (bool)($nlData['enabled'] ?? true);
+    ?>
+    <fieldset>
+      <legend>Newsletter</legend>
+      <input type="hidden" name="newsletter[enabled]" value="0">
+      <label style="display:flex;gap:8px;align-items:center;">
+        <input type="checkbox" name="newsletter[enabled]" value="1" <?= $nlEnabled ? 'checked' : '' ?> style="width:auto;margin:0;">
+        Show the subscribe form and accept new subscribers
+      </label>
+
+      <div class="grid">
+        <div>
+          <label for="nl_from_name">Sender name</label>
+          <input type="text" id="nl_from_name" name="newsletter[from_name]" value="<?= st_h($nlv('from_name', $v('site', 'name'))) ?>" maxlength="100">
+        </div>
+        <div>
+          <label for="nl_reply_to">Reply-To address</label>
+          <input type="text" id="nl_reply_to" name="newsletter[reply_to]" value="<?= st_h($nlv('reply_to')) ?>" placeholder="hello@example.com">
+        </div>
+      </div>
+      <p class="hint">Replies go to the Reply-To address (the sender address itself comes from EMAIL_FROM in the .env file). Replies are the best signal for inbox delivery, so use a real mailbox.</p>
+
+      <label for="nl_form_text">Form text</label>
+      <input type="text" id="nl_form_text" name="newsletter[form_text]" value="<?= st_h($nlv('form_text', 'Get new posts in your inbox.')) ?>" maxlength="200">
+
+      <div class="grid">
+        <div>
+          <label for="nl_form_button">Button text</label>
+          <input type="text" id="nl_form_button" name="newsletter[form_button]" value="<?= st_h($nlv('form_button', 'Subscribe')) ?>" maxlength="30">
+        </div>
+        <div>
+          <label for="nl_form_note">Small note under the form</label>
+          <input type="text" id="nl_form_note" name="newsletter[form_note]" value="<?= st_h($nlv('form_note', 'No spam. Unsubscribe anytime.')) ?>" maxlength="200">
+        </div>
+      </div>
+
+      <label for="nl_intro">Email greeting (above the post)</label>
+      <textarea id="nl_intro" name="newsletter[intro]" rows="3" placeholder="Hi, here is my latest post:"><?= st_h($nlv('intro')) ?></textarea>
+
+      <label for="nl_outro">Email closing (below the post)</label>
+      <textarea id="nl_outro" name="newsletter[outro]" rows="3" placeholder="Thanks for reading. Just reply to this email if you want to say hi."><?= st_h($nlv('outro')) ?></textarea>
+      <p class="hint">Plain text, line breaks are kept. Keep them short and personal: it makes the email look like a real message.</p>
+
+      <label for="nl_delay">Send delay after publishing (minutes)</label>
+      <input type="text" id="nl_delay" name="newsletter[delay_minutes]" value="<?= st_h($nlv('delay_minutes', '10')) ?>" style="max-width:120px;">
+      <p class="hint">Gives you time to fix a typo before the email goes out. 0 = as soon as possible.</p>
     </fieldset>
 
     <button type="submit">Save settings</button>

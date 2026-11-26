@@ -249,6 +249,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
     </div>
   </div>
+  <?php require __DIR__ . '/includes/subscribe_form.php'; ?>
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

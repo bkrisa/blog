@@ -201,6 +201,44 @@ For the settings page to save, the web server user (usually `www-data`) must be 
 
 If the file isn't writable, the settings page shows an error instead of failing silently.
 
+## Newsletter
+
+OpenBlog can email new posts to subscribers. Readers subscribe with their email address, confirm it (double opt-in), and get the full post by email when you publish it. Sending goes through [Cloudflare Email Service](https://developers.cloudflare.com/email-service/), so there is nothing else to install.
+
+### How it works
+
+- A small form (`includes/subscribe_form.php`) collects the address. A confirmation email follows, nobody is subscribed before clicking the button in it.
+- When you publish a post, tick the envelope icon in the editor to email it to your subscribers. Nothing is sent unless you tick it, drafts are never sent, and editing a post later does not send it again.
+- Emails are queued and sent by a cron job (`scripts/send_queue.php`) in small batches, with a few minutes of delay so you can still fix a typo.
+- Every email has an unsubscribe link and the `List-Unsubscribe` headers (Gmail and Yahoo show their own "Unsubscribe" button).
+- The dashboard page `dashboard/subscribers.php` lists subscribers, lets you delete them, export a CSV, and shows what was sent and what failed.
+
+### Setup
+
+1. **Cloudflare.** Your domain's DNS must be on Cloudflare. In the Cloudflare dashboard, onboard a sending domain for Email Service. A subdomain (for example `e.example.com`) keeps the reputation of your main domain safe. Cloudflare adds the SPF, DKIM and DMARC records.
+2. **API token.** Create an API token with the "Email Sending: Edit" permission.
+3. **`.env`:**
+   ```
+   EMAIL_SMTP_HOST=smtp.mx.cloudflare.net
+   EMAIL_SMTP_PORT=465
+   EMAIL_API_TOKEN=your-api-token
+   EMAIL_FROM=no-reply@e.example.com
+   ```
+   Make sure `.env` is not served by the web server and is in `.gitignore`. For local development set `EMAIL_DRIVER=log`: emails are written to a file (`EMAIL_LOG_PATH`) instead of being sent.
+4. **nginx.** Route `/blog/newsletter` to `app/newsletter.php` (same way as `search`).
+5. **Cron** (every minute):
+   ```
+   * * * * * php /path/to/blog/app/scripts/send_queue.php >> /var/log/openblog-newsletter.log 2>&1
+   ```
+6. **Settings page, "Newsletter":** sender name, Reply-To address (a real mailbox: replies are the best signal for inbox delivery), the form texts, and a short greeting and closing for the emails.
+7. Put the form where you want it: `require __DIR__ . '/includes/subscribe_form.php';`
+
+### Good to know
+
+- Readers' email addresses are personal data. You are the controller: link a short privacy notice near the form, and delete a subscriber from the dashboard when asked.
+- Sending limits and prices are Cloudflare's. A new account starts with a conservative daily limit; the queue simply continues the next day.
+- Bounced addresses are switched off automatically, and one person can only request a few confirmation emails per hour.
+
 ## Security notes
 
 - Never point your web server's document root at the repository root — only at `app/`. This keeps `setup_db.php`, `.env`, and this README itself out of reach from the outside.

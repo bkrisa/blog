@@ -24,7 +24,6 @@ header {
   justify-content: space-between;
   padding: 10px 0;
   margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
   font-size: 15px;
   position: relative;
 }
@@ -82,7 +81,7 @@ header nav a {text-decoration: none;color: var(--text);}
 
 /* blog */
 .post-list article {display: flex;gap: 12px;padding: 20px 0;}
-.post-list article:not(:last-child) {border-bottom: 1px solid #eee;}
+.post-list article:not(:last-child) {border-bottom: 1px solid color-mix(in srgb, var(--text) 40%, transparent);}
 .post-thumbnail-link {width: 60%;}
 .post-thumbnail-link img {object-fit: cover;border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);}
 .post-list time {margin: 0;font-size: 14px;}
@@ -110,7 +109,7 @@ header nav a {text-decoration: none;color: var(--text);}
   font: inherit;
   color: inherit;
   padding: 6px 10px;
-  border: 1px solid #eee;
+  border: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
   border-radius: 10px;
   outline: none;
 }
@@ -136,6 +135,7 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
 .post-tags a:not(:last-child)::after {content: ',';}
 .post-content {margin-bottom: 20px;}
 .post-content ul, .post-content ol {margin-left: 30px;margin-bottom: 1rem;}
+.post-content li {margin-bottom: 6px;}
 .post-content .heading-link {color: inherit; text-decoration: none;}
 .post-content .heading-link:hover::after {content: " #";opacity: 0.4;}
 .post-content img {
@@ -220,6 +220,29 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
   border-radius: 50%;
 }
 
+/* newsletter form */
+.subscribe {position: relative; margin: 1.5rem 0 4rem 0; padding-top: 1rem; text-align: center;}
+.subscribe:before {
+  content: '';
+  width: 12rem;
+  border-top: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
+  top: 0;
+  margin: 0 -6rem;
+  position: absolute;
+}
+.subscribe-text {display: block; margin: 0 0 8px;}
+.subscribe-row {display: flex; max-width: 342px; margin: 0 auto;}
+.subscribe-row input[type=email] {
+  flex: 1; min-width: 0; font: inherit; padding: 8px 12px; color: var(--text);
+  background: transparent; border: 1px solid color-mix(in srgb, var(--text) 40%, transparent); border-radius: 10px 0 0 10px; border-right: none;
+}
+.subscribe-row input[type=email]:focus-visible {outline: auto;}
+.subscribe-row button, .newsletter-result button {
+  font: inherit; color: #fff; background: var(--main); border: 0; border-radius: 0 10px 10px 0; padding: 8px 16px; cursor: pointer;
+}
+.subscribe-note {margin: 6px 0 0; font-size: 13px; opacity: .7;}
+.newsletter-result {padding: 2rem 0;}
+
 /* tags */
 .tag-list {
   display: flex;
@@ -235,7 +258,7 @@ mark { background: color-mix(in srgb, var(--main) 30%, transparent); color: inhe
 footer {
   margin-top: 40px;
   padding: 20px 0;
-  border-top: 1px solid #eee;
+  border-top: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
   text-align: center;
   font-size: 14px;
 }
@@ -267,7 +290,6 @@ footer ul {
     left: 0;
     right: 0;
     background: var(--bg);
-    border-bottom: 1px solid #eee;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
