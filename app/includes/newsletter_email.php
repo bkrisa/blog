@@ -283,15 +283,15 @@ function newsletterBuildMessage(array $post, array $subscriber): array {
   if (trim($n['intro']) !== '') {
     $html .= nlParagraphsHtml($n['intro']);
   }
-  $html .= '<h1 style="margin:0 0 20px;font-size:26px;line-height:1.25;"><a href="' . nl_h($postUrl) . '" style="color:#222222;text-decoration:none;">' . $titleH . '</a></h1>';
+  $html .= '<a href="' . nl_h($postUrl) . '" style="color:#777777;text-align:right;padding:0 0 24;font-size:12px;line-height:1;">Read online</a>' .
+  $html .= '<h1 style="margin:0 0 20px;font-size:22px;line-height:1.25;">' . $titleH . '</h1>';
   $html .= $body['html'];
   if (trim($n['outro']) !== '') {
     $html .= nlParagraphsHtml($n['outro']);
   }
   $html .= '<hr style="border:0;border-top:1px solid #dddddd;margin:32px 0 14px;">'
     . '<p style="margin:0;font-size:13px;line-height:1.5;color:#777777;">You get this email because you subscribed to ' . nl_h($site) . '. '
-    . '<a href="' . nl_h($postUrl) . '" style="color:' . nl_h($linkColor) . ';">Read it on the web</a> &middot; '
-    . '<a href="' . nl_h($unsubscribe) . '" style="color:' . nl_h($linkColor) . ';">Unsubscribe</a></p>'
+    . '<a href="' . nl_h($unsubscribe) . '">Unsubscribe</a></p>'
     . '</div></body></html>';
 
   $text = '';
